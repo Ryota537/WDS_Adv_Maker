@@ -30,6 +30,22 @@ export class AdvPlayer extends Container<any> {
   //init
   protected _inited : boolean = false;
   protected _loadPromise: Promise<any> | undefined;
+  protected _isSandboxMode: boolean = false;
+
+  get isSandboxMode(): boolean {
+    return this._isSandboxMode;
+  }
+
+  set isSandboxMode(val: boolean) {
+    this._isSandboxMode = val;
+    if (val) {
+      if (this._coverOpening) {
+        this._coverOpening.visible = false;
+      }
+      this.off("pointertap", this._tap, this);
+    }
+  }
+
   //View
   protected _backgroundView!: BackgroundView;
   protected _characterView!: CharacterView;
@@ -95,6 +111,9 @@ export class AdvPlayer extends Container<any> {
 
     // Cover
     this._coverOpening = CoverOpening.new().addTo(this, Layer.CoverLayer);
+    if (this._isSandboxMode) {
+      this._coverOpening.visible = false;
+    }
 
     // ui button setting
     this._uiView.AutoBtn.addclickFun(() => {
@@ -230,12 +249,17 @@ export class AdvPlayer extends Container<any> {
     auto?: string,
     record?: string
   ) {
+    if (this._isSandboxMode) {
+      console.log("Sandbox mode is active, bypassing automatic story playback.");
+      return;
+    }
     this._isRecord = (record?.toLowerCase() === 'true');
     this._autoLock(auto);
     this.load(source, translate).then(() => this._onready());
   }
 
   public play(auto?: string) {
+    if (this._isSandboxMode) return;
     this._autoLock(auto);
     if (this._loadPromise) {
       this._loadPromise.then(() => this._onready());
@@ -457,6 +481,9 @@ export class AdvPlayer extends Container<any> {
   }
 
   protected _tap(e: FederatedPointerEvent) {
+    if (this._isSandboxMode) {
+      return;
+    }
     if (e.target !== this) {
       return;
     }
@@ -502,6 +529,28 @@ export class AdvPlayer extends Container<any> {
 
   get TranslationController(){
     return this._translationController;
+  }
+
+  public async setSandboxBackground(bgId: string) {
+    await this._backgroundView.setSandboxBackground(bgId);
+  }
+
+  public async updateSandboxCharacter(
+    charId: string, 
+    costumeId: string, 
+    motion: string, 
+    facial: string, 
+    position: {x: number, y: number, scale: number}
+  ) {
+    await this._characterView.updateSandboxCharacter(charId, costumeId, motion, facial, position);
+  }
+
+  public removeSandboxCharacter(charId: string) {
+    this._characterView.removeSandboxCharacter(charId);
+  }
+
+  public setSandboxText(speakerName: string, dialogueText: string) {
+    this._textView.setSandboxText(speakerName, dialogueText);
   }
 
 }

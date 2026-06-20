@@ -3,6 +3,7 @@ import { Tween } from "tweedle.js";
 import { IView, episodeExecutable } from "../types/View";
 import { FadeTypes, IEpisodeBackground, IEpisodeFade } from "../types/Episode";
 import SceneCameraList from "../constant/SceneCamera";
+import { resPath } from "../utils/resPath";
 
 type CameraEffect = {
   Id: number;
@@ -237,6 +238,36 @@ export class BackgroundView extends IView implements episodeExecutable{
       this._currentCardLabel = BackgroundCharacterImageFileName;
       this.addChild(this._currentCard!);      
     }  
+  }
+
+  public async setSandboxBackground(bgId: string) {
+    const bgKey = `bg_${bgId}`;
+    if (!Assets.cache.has(bgKey)) {
+      const bgUrl = resPath.background(bgId);
+      Assets.add({ alias: bgKey, src: bgUrl });
+      await Assets.load(bgKey);
+    }
+
+    // Clear any active character image card/CG overlay
+    this._characterImageControl();
+
+    let newbg = this._bgMap.get(bgId);
+    if (!newbg) {
+      newbg = new Sprite(Assets.get(bgKey));
+      newbg.anchor.set(0.5);
+      newbg.scale.set(1.17);
+      newbg.position.set(1920 / 2, 1080 / 2);
+      this._bgMap.set(bgId, newbg);
+    }
+
+    newbg.alpha = 1;
+    newbg.zIndex = 1;
+    this.addChild(newbg);
+
+    if (this._currentBG && this._currentBG !== newbg) {
+      this.removeChild(this._currentBG);
+    }
+    this._currentBG = newbg;
   }
 
 }

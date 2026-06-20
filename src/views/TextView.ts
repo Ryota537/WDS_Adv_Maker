@@ -234,4 +234,29 @@ export class TextView extends IView implements episodeExecutable{
         this._isTranslate = bool;
     }
 
+    public setSandboxText(speakerName: string, dialogueText: string) {
+        if (this._typingEffect) {
+            clearInterval(this._typingEffect);
+            this._typingEffect = void 0;
+        }
+
+        if (this._textPanelContainer.alpha === 0) {
+            this.showTextPanel();
+        }
+
+        this._nextIcon.alpha = 0;
+        this._nextIconAnimtor?.stop();
+
+        this._sprakerText.text = speakerName || '';
+        this._sprakerText.style.fontSize = this._sprakerText.width >= 275 ? 35 : 40;
+
+        this._phrase.text = dialogueText || '';
+
+        // Store current text values
+        this._currenttext = {
+            SpeakerName: speakerName,
+            Phrase: dialogueText
+        };
+    }
+
 }

@@ -1,4 +1,5 @@
-import { Container } from "pixi.js";
+import { Container, Assets } from "pixi.js";
+import { resPath } from "../utils/resPath";
 import { episodeExecutable, IView } from "../types/View";
 import { IEpisodeBackground, IEpisodeCharacter, IEpisodeUnitCharacterMotion } from "../types/Episode";
 import { characterAnimation, AdventureAnimationStandCharacter } from '../object/characterSpineModel'
@@ -164,6 +165,98 @@ export class CharacterView extends IView implements episodeExecutable{
 
     offAllLipSync() : void{
         this._motionCharacters.forEach(record => record.character?.offLipSync());
+    }
+
+    public async updateSandboxCharacter(
+        charId: string, 
+        costumeId: string, 
+        motion: string, 
+        facial: string, 
+        position: {x: number, y: number, scale: number}
+    ) {
+        const spineId = parseInt(charId + costumeId, 10);
+        
+        // Ensure assets are loaded
+        const skelKey = `spine_${spineId}`;
+        const atlasKey = `spine_atlas_${spineId}`;
+        if (!Assets.cache.has(skelKey) || !Assets.cache.has(atlasKey)) {
+            const skelUrl = resPath.spine(spineId);
+            const atlasUrl = resPath.spine_atlas(spineId);
+            if (!Assets.cache.has(skelKey)) {
+                Assets.add({ alias: skelKey, src: skelUrl });
+            }
+            if (!Assets.cache.has(atlasKey)) {
+                Assets.add({ alias: atlasKey, src: atlasUrl });
+            }
+            await Assets.load([skelKey, atlasKey]);
+        }
+
+        // Upsert Logic: Check if character with this charId is already on stage
+        let record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+
+        if (record) {
+            // Check if costume (and thus spineId) has changed
+            if (record.spineId !== spineId) {
+                // Destroy old model
+                const oldChar = record.character;
+                if (oldChar) {
+                    this.removeChild(oldChar.model);
+                    oldChar.destory();
+                }
+                
+                // Create new model
+                const newModel = new AdventureAnimationStandCharacter(spineId);
+                newModel.addTo(this);
+                this._standCharacters.set(`${spineId}`, newModel);
+                
+                record.spineId = spineId;
+                record.character = newModel;
+            }
+        } else {
+            // Character doesn't exist, create it
+            const newModel = new AdventureAnimationStandCharacter(spineId);
+            newModel.addTo(this);
+            this._standCharacters.set(`${spineId}`, newModel);
+            
+            // Assign next available slot number
+            const slotNumber = this._motionCharacters.length + 1;
+            newModel.changeSlotNumber(slotNumber);
+            
+            record = {
+                slotNumber: slotNumber,
+                spineId: spineId,
+                character: newModel
+            };
+            this._motionCharacters.push(record);
+        }
+
+        // Apply visual updates
+        const model = record.character;
+        if (model) {
+            model.showCharacter(true);
+            model.setPositionCoords(position.x, position.y);
+            model.setScale(position.scale);
+            
+            if (motion) {
+                model.setBodyMotion(motion);
+            }
+            if (facial) {
+                model.setFacialExpression(facial);
+            }
+        }
+    }
+
+    public removeSandboxCharacter(charId: string) {
+        const index = this._motionCharacters.findIndex(item => item.character && item.character.charId === charId);
+        if (index !== -1) {
+            const record = this._motionCharacters[index];
+            if (record.character) {
+                this.removeChild(record.character.model);
+                record.character.destory();
+                this._standCharacters.delete(`${record.spineId}`);
+            }
+            this._motionCharacters.splice(index, 1);
+        }
     }
 
 }

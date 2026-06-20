@@ -3,6 +3,8 @@ import { Spine } from '@esotericsoftware/spine-pixi-v8';
 import { CharacterAppearanceTypes, CharacterPositions } from "../types/Episode";
 import LoopMotion from "../constant/LoopMotion";
 import ChangeBodyMotion from "../constant/ChangeBodyMotion";
+import BodyMotion from "../constant/BodyMotion";
+import FacialExpression from "../constant/FacialExpression";
 
 export interface characterAnimation {
     bodyAnimationName : string,
@@ -255,5 +257,70 @@ export class AdventureAnimationStandCharacter {
 
     get visible(){
         return this._model.visible;
+    }
+
+    get charId(){
+        return this._charId;
+    }
+
+    get model() {
+        return this._model;
+    }
+
+    setPositionCoords(x: number, y: number) {
+        this._model.x = x;
+        this._model.y = y;
+    }
+
+    setBodyMotion(motion: string | number) {
+        let motionName = "";
+        if (typeof motion === "number" || !isNaN(Number(motion))) {
+            const id = typeof motion === "number" ? motion : parseInt(motion, 10);
+            const found = BodyMotion.find((bm) => bm.Id === id);
+            if (found) {
+                motionName = found.MotionName;
+            }
+        } else {
+            motionName = motion as string;
+        }
+
+        if (motionName && this.checkhasAnimation(motionName)) {
+            let beforeMotionName = this._motions.bodyAnimationName;
+            let mixDuration = 0.3;
+            if (beforeMotionName) {
+                let changeMotion = ChangeBodyMotion.find(({BeforeMotionName, AfterMotionName}) => 
+                    BeforeMotionName === beforeMotionName && AfterMotionName === motionName
+                );
+                if (changeMotion) {
+                    mixDuration = changeMotion.Second;
+                }
+            }
+            this._model.autoUpdate = false;
+            let entry = this._model.state.setAnimation(1, motionName, false);
+            entry.mixDuration = mixDuration;
+            this._model.update(0);
+            this._model.autoUpdate = true;
+            this._motions.bodyAnimationName = motionName;
+        }
+    }
+
+    setFacialExpression(expression: string | number) {
+        let expressionData;
+        if (typeof expression === "number" || !isNaN(Number(expression))) {
+            const id = typeof expression === "number" ? expression : parseInt(expression, 10);
+            expressionData = FacialExpression.find((fe) => fe.Id === id);
+        }
+
+        if (expressionData) {
+            const characterAnimation: Partial<characterAnimation> = {};
+            characterAnimation.eyebrowAnimationName = expressionData.EyeBrow;
+            characterAnimation.eyeMotionName = expressionData.Eye;
+            characterAnimation.eyeAnimationName = expressionData.EyeBlink ?? undefined;
+            characterAnimation.cheekAnimationName = expressionData.Cheek;
+            characterAnimation.mouthAnimationName = expressionData.Mouth;
+            characterAnimation.FacialExpressionMasterId = expressionData.Id;
+            
+            this.SetAllAnimation(characterAnimation);
+        }
     }
 }
