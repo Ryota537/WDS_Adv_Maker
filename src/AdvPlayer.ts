@@ -25,6 +25,7 @@ import { createEmptySprite } from "./utils/emptySprite";
 import { resPath } from "./utils/resPath";
 import { loadJson, loadResourcesFromEpisode, loadPlayerAssetsBundle } from './utils/loadResources'
 import { banner, TrackLog } from "./utils/logger";
+import { exportSceneToJson } from "./utils/sandboxStorage";
 
 export class AdvPlayer extends Container<any> {
   //init
@@ -551,6 +552,46 @@ export class AdvPlayer extends Container<any> {
 
   public setSandboxText(speakerName: string, dialogueText: string) {
     this._textView.setSandboxText(speakerName, dialogueText);
+  }
+
+  public getSandboxState() {
+    return {
+      backgroundId: this._backgroundView.currentBGId,
+      dialogue: this._textView.sandboxText,
+      characters: this._characterView.getSandboxCharactersState()
+    };
+  }
+
+  public async applySandboxState(state: any) {
+    if (!state) return;
+    
+    // Restore Background
+    if (state.backgroundId) {
+      await this.setSandboxBackground(state.backgroundId);
+    }
+    
+    // Restore Text/Dialogue
+    if (state.dialogue) {
+      this.setSandboxText(state.dialogue.speakerName || '', state.dialogue.dialogueText || '');
+    }
+    
+    // Restore Characters
+    this._characterView.clear();
+    if (Array.isArray(state.characters)) {
+      for (const char of state.characters) {
+        await this.updateSandboxCharacter(
+          char.charId,
+          char.costumeId,
+          char.motion,
+          char.facial,
+          char.position
+        );
+      }
+    }
+  }
+
+  public exportSceneToJson() {
+    exportSceneToJson(this.getSandboxState());
   }
 
 }

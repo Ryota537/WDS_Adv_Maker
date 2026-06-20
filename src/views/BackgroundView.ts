@@ -24,6 +24,11 @@ export class BackgroundView extends IView implements episodeExecutable{
   protected _currentCardLabel: string = "";
   protected _currentCameraEffects: CameraEffect | undefined;
   protected _cuttentZoom: Tween<any> | undefined;
+  protected _currentBGId: string = "";
+
+  get currentBGId() {
+    return this._currentBGId;
+  }
 
   constructor() {
     super();
@@ -79,6 +84,7 @@ export class BackgroundView extends IView implements episodeExecutable{
 
     // 如果有 BackgroundImageFileName
     if (BackgroundImageFileName) {
+      this._currentBGId = BackgroundImageFileName;
       if (this._currentBG) {
         this._currentBG.zIndex = 0;
       }
@@ -102,6 +108,7 @@ export class BackgroundView extends IView implements episodeExecutable{
 
     // 如果有 StillPhotoFileName
     if (StillPhotoFileName) {
+      this._currentBGId = StillPhotoFileName;
       if (this._currentBG) {
         this._currentBG.zIndex = 0;
       }
@@ -250,6 +257,7 @@ export class BackgroundView extends IView implements episodeExecutable{
 
     // Clear any active character image card/CG overlay
     this._characterImageControl();
+    this._currentBGId = bgId;
 
     let newbg = this._bgMap.get(bgId);
     if (!newbg) {

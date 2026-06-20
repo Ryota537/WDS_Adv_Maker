@@ -259,4 +259,11 @@ export class TextView extends IView implements episodeExecutable{
         };
     }
 
+    get sandboxText() {
+        return {
+            speakerName: this._sprakerText.text,
+            dialogueText: this._phrase.text
+        };
+    }
+
 }

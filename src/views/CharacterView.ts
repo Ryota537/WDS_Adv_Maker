@@ -259,4 +259,10 @@ export class CharacterView extends IView implements episodeExecutable{
         }
     }
 
+    public getSandboxCharactersState() {
+        return this._motionCharacters
+            .filter(item => item.character)
+            .map(item => item.character!.sandboxState);
+    }
+
 }

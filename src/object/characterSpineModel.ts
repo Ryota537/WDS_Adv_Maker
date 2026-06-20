@@ -267,6 +267,32 @@ export class AdventureAnimationStandCharacter {
         return this._model;
     }
 
+    get costumeId(): string {
+        return String(this._spineId).slice(3);
+    }
+
+    get currentMotion(): string {
+        return this._motions.bodyAnimationName || "";
+    }
+
+    get currentFacial(): number {
+        return this._motions.FacialExpressionMasterId || 0;
+    }
+
+    get sandboxState() {
+        return {
+            charId: this.charId,
+            costumeId: this.costumeId,
+            motion: this.currentMotion,
+            facial: String(this.currentFacial),
+            position: {
+                x: this._model.x,
+                y: this._model.y,
+                scale: this._model.scale.x
+            }
+        };
+    }
+
     setPositionCoords(x: number, y: number) {
         this._model.x = x;
         this._model.y = y;
