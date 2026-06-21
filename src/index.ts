@@ -4,7 +4,7 @@ import { createApp } from "./utils/createApp";
 import { resPath } from "./utils/resPath";
 import { Assets } from "pixi.js";
 import { saveCustomBackground, getCustomBackgrounds, deleteCustomBackground } from "./utils/customBgStorage";
-import { CHARACTER_MAP } from "./constant/charList";
+import { CHARACTER_MAP, THEATER_ORDER } from "./constant/charList";
 import BodyMotion from "./constant/BodyMotion";
 import FacialExpression from "./constant/FacialExpression";
 
@@ -803,24 +803,46 @@ const initCharacterTab = async () => {
       charCostumesMap.get(charId)!.push(costumeId);
     });
 
-    // 3. Populate #add-character-select dropdown
+    // 3. Populate #add-character-select dropdown grouped by theater
     if (addCharacterSelect) {
       addCharacterSelect.innerHTML = '<option value="" disabled selected>Select Character...</option>';
-      
-      const sortedCharIds = Array.from(uniqueCharIds).sort((a, b) => {
-        const nameA = CHARACTER_MAP[a]?.name || `Unknown (${a})`;
-        const nameB = CHARACTER_MAP[b]?.name || `Unknown (${b})`;
-        return nameA.localeCompare(nameB);
+
+      // Group characters by theater
+      const theaterGroups: Record<string, { charId: string; name: string }[]> = {};
+
+      uniqueCharIds.forEach(charId => {
+        const charInfo = CHARACTER_MAP[charId];
+        const theater = charInfo ? charInfo.theater : "Unknown";
+        const name = charInfo ? charInfo.name : `Character ${charId}`;
+
+        if (!theaterGroups[theater]) {
+          theaterGroups[theater] = [];
+        }
+        theaterGroups[theater].push({ charId, name });
       });
 
-      sortedCharIds.forEach(charId => {
-        const charInfo = CHARACTER_MAP[charId];
-        if (charInfo) {
+      // Order the theater groups
+      const orderedTheaters = [
+        ...THEATER_ORDER.filter(t => theaterGroups[t]),
+        ...Object.keys(theaterGroups).filter(t => !THEATER_ORDER.includes(t))
+      ];
+
+      orderedTheaters.forEach(theater => {
+        const group = theaterGroups[theater];
+        const optgroup = document.createElement("optgroup");
+        optgroup.label = theater;
+
+        // Sort characters alphabetically within this theater
+        group.sort((a, b) => a.name.localeCompare(b.name));
+
+        group.forEach(({ charId, name }) => {
           const option = document.createElement("option");
           option.value = charId;
-          option.textContent = `${charInfo.name} (${charId})`;
-          addCharacterSelect.appendChild(option);
-        }
+          option.textContent = `${name} (${charId})`;
+          optgroup.appendChild(option);
+        });
+
+        addCharacterSelect.appendChild(optgroup);
       });
     }
   } catch (error) {
