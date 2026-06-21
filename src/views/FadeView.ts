@@ -77,8 +77,9 @@ export class FadeView extends IView implements episodeExecutable{
       }
 
       if(fadein){
+        const activeFadein = fadein;
         return () => {
-          fadein.start(); //
+          activeFadein.start(); //
           return new Promise<void>((res, _)=>{
             setTimeout(()=>{
               res();

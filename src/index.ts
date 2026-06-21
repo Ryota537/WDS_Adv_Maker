@@ -388,7 +388,7 @@ window.sandboxStorage = {
     try {
       await advplayer.importSceneFromJson(file);
     } catch (error: any) {
-      alert("Gagal memuat proyek: " + error.message);
+      alert("Failed to load project: " + error.message);
     }
   }
 };
@@ -610,19 +610,19 @@ const renderCharacterControllers = () => {
     };
 
     // Position X Slider
-    const xSliderGroup = createSlider("Posisi X", 0, 1920, 1, char.position.x, async (xVal) => {
+    const xSliderGroup = createSlider("Position X", 0, 1920, 1, char.position.x, async (xVal) => {
       char.position.x = xVal;
       await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
 
     // Position Y Slider
-    const ySliderGroup = createSlider("Posisi Y", 0, 1080, 1, char.position.y, async (yVal) => {
+    const ySliderGroup = createSlider("Position Y", 0, 1080, 1, char.position.y, async (yVal) => {
       char.position.y = yVal;
       await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
 
     // Scale Slider
-    const scaleSliderGroup = createSlider("Skala Ukuran", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
+    const scaleSliderGroup = createSlider("Scale", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
       char.position.scale = scaleVal;
       await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
@@ -630,7 +630,7 @@ const renderCharacterControllers = () => {
     // Costume Dropdown
     const costumeGroup = document.createElement("div");
     costumeGroup.className = "slider-group";
-    costumeGroup.innerHTML = `<div class="slider-label-row"><span>Kostum/Baju</span></div>`;
+    costumeGroup.innerHTML = `<div class="slider-label-row"><span>Costume</span></div>`;
     const costumeSelect = document.createElement("select");
     costumeSelect.className = "char-dropdown";
     costumes.forEach(c => {
@@ -670,7 +670,7 @@ const renderCharacterControllers = () => {
     // Facial Expression Dropdown
     const facialGroup = document.createElement("div");
     facialGroup.className = "slider-group";
-    facialGroup.innerHTML = `<div class="slider-label-row"><span>Facial Ekspresi</span></div>`;
+    facialGroup.innerHTML = `<div class="slider-label-row"><span>Facial Expression</span></div>`;
     const facialSelect = document.createElement("select");
     facialSelect.className = "char-dropdown";
     FacialExpression.forEach(fe => {
@@ -711,10 +711,10 @@ const renderCharacterControllers = () => {
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "btn btn-danger";
     deleteBtn.style.marginTop = "6px";
-    deleteBtn.textContent = "Hapus Karakter";
+    deleteBtn.textContent = "Delete Character";
     deleteBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (confirm(`Hapus karakter ${charInfo.name} dari panggung?`)) {
+      if (confirm(`Remove character ${charInfo.name} from stage?`)) {
         advplayer.removeSandboxCharacter(charId);
         renderCharacterControllers();
       }
@@ -1028,14 +1028,14 @@ const initCharacterTab = async () => {
 addCharacterBtn?.addEventListener("click", async () => {
   const charId = addCharacterSelect.value;
   if (!charId) {
-    alert("Pilih karakter terlebih dahulu.");
+    alert("Please select a character first.");
     return;
   }
 
   // Check if character is already on stage
   const activeChars = advplayer.getSandboxState().characters;
   if (activeChars.some(c => c.charId === charId)) {
-    alert("Karakter sudah ada di panggung.");
+    alert("Character is already on stage.");
     return;
   }
 
@@ -1056,7 +1056,7 @@ addCharacterBtn?.addEventListener("click", async () => {
     renderCharacterControllers();
   } catch (error) {
     console.error("Failed to add character:", error);
-    alert("Gagal memuat aset karakter Spine.");
+    alert("Failed to load Spine character assets.");
   } finally {
     addCharacterBtn.disabled = false;
     addCharacterBtn.textContent = "Add";

@@ -52,8 +52,8 @@ export class BackgroundView extends IView implements episodeExecutable{
     StillPhotoFileName,
     SceneCameraMasterId,
     FadeValue1 = 0,
-    FadeValue2 = 0,
-    FadeValue3 = 0,
+    FadeValue2: _FadeValue2 = 0,
+    FadeValue3: _FadeValue3 = 0,
   }: IEpisodeBackground & IEpisodeFade) :  (() => Promise<void>) | undefined  {
 
     //清除之前的CameraEffect

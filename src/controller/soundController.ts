@@ -1,6 +1,5 @@
 import { Assets } from "pixi.js";
 import { IMediaInstance, sound, Sound } from "@pixi/sound";
-import { Tween } from "tweedle.js";
 import { IEpisodeSound } from "../types/Episode";
 
 export class SoundController {
@@ -157,7 +156,7 @@ export class SoundController {
     return this._onVoiceEnd;
   }
 
-  set onVoiceEnd(callback : Function){
+  set onVoiceEnd(callback : Function | undefined){
     this._onVoiceEnd = callback;
   }
 

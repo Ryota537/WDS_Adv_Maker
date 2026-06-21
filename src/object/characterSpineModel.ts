@@ -116,7 +116,7 @@ export class AdventureAnimationStandCharacter {
     
     SetAllAnimation(
         characterAnimation : Partial<characterAnimation>,
-        loopMotionSpeed : number = this._loopMotionData?.LoopSpeed || 1,
+        _loopMotionSpeed : number = this._loopMotionData?.LoopSpeed || 1,
     ){
         const { 
             bodyAnimationName, 
@@ -187,8 +187,9 @@ export class AdventureAnimationStandCharacter {
 
     _eyeBlinkAnimation(trackIndex: number, animationName: string, time : number = 1){
         this._model.state.setAnimation(trackIndex, animationName, false);
-        if (this._model.state.tracks[trackIndex]) {
-            this._model.state.tracks[trackIndex].listener = {
+        const track = this._model.state.tracks[trackIndex];
+        if (track) {
+            track.listener = {
                 complete : () => {
                     this._eyeBlinkTimeout = setTimeout(()=>{
                         clearTimeout(this._eyeBlinkTimeout);
