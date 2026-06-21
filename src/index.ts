@@ -336,6 +336,7 @@ const characterControllersContainer = document.getElementById("character-control
 
 let spineList: Array<{ Id: number, CharacterId: number, CompanyId: number }> = [];
 const charCostumesMap = new Map<string, string[]>();
+const activeCharTabs = new Map<string, 'preset' | 'custom'>();
 
 const renderCharacterControllers = () => {
   if (!characterControllersContainer) return;
@@ -352,6 +353,7 @@ const renderCharacterControllers = () => {
     const charId = char.charId;
     const charInfo = CHARACTER_MAP[charId] || { name: `Character ${charId}`, theater: "" };
     const costumes = charCostumesMap.get(charId) || ["01"];
+    const activeTab = activeCharTabs.get(charId) || 'preset';
 
     // Create card container
     const card = document.createElement("div");
@@ -372,7 +374,7 @@ const renderCharacterControllers = () => {
     toggleIndicator.textContent = "▼";
     header.appendChild(toggleIndicator);
 
-    // Body (collapsible, visible by default)
+    // Body (collapsible, open by default)
     const body = document.createElement("div");
     body.className = "char-card-body";
 
@@ -382,6 +384,49 @@ const renderCharacterControllers = () => {
       body.style.display = isHidden ? "flex" : "none";
       toggleIndicator.textContent = isHidden ? "▼" : "▲";
     });
+
+    // Sub-Tabs Header
+    const tabsHeader = document.createElement("div");
+    tabsHeader.className = "char-card-tabs-header";
+
+    const presetTabBtn = document.createElement("button");
+    presetTabBtn.className = `char-card-tab-btn ${activeTab === 'preset' ? 'active' : ''}`;
+    presetTabBtn.textContent = "Preset";
+
+    const customTabBtn = document.createElement("button");
+    customTabBtn.className = `char-card-tab-btn ${activeTab === 'custom' ? 'active' : ''}`;
+    customTabBtn.textContent = "Custom";
+
+    tabsHeader.appendChild(presetTabBtn);
+    tabsHeader.appendChild(customTabBtn);
+
+    // Tab Panes
+    const presetPane = document.createElement("div");
+    presetPane.className = `char-card-tab-pane ${activeTab === 'preset' ? 'active' : ''}`;
+
+    const customPane = document.createElement("div");
+    customPane.className = `char-card-tab-pane ${activeTab === 'custom' ? 'active' : ''}`;
+
+    // Switch tab handler
+    const switchTab = (tab: 'preset' | 'custom') => {
+      activeCharTabs.set(charId, tab);
+      presetTabBtn.classList.toggle("active", tab === 'preset');
+      customTabBtn.classList.toggle("active", tab === 'custom');
+      presetPane.classList.toggle("active", tab === 'preset');
+      customPane.classList.toggle("active", tab === 'custom');
+    };
+
+    presetTabBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // Avoid collapsing the card
+      switchTab('preset');
+    });
+
+    customTabBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // Avoid collapsing the card
+      switchTab('custom');
+    });
+
+    // ==================== PRESET TAB PANE ====================
 
     // Helper to create slider
     const createSlider = (label: string, min: number, max: number, step: number, val: number, onChange: (v: number) => void) => {
@@ -410,23 +455,23 @@ const renderCharacterControllers = () => {
 
       group.appendChild(labelRow);
       group.appendChild(slider);
-      return { element: group, slider };
+      return group;
     };
 
     // Position X Slider
-    const { element: xSliderGroup } = createSlider("Posisi X", 0, 1920, 1, char.position.x, async (xVal) => {
+    const xSliderGroup = createSlider("Posisi X", 0, 1920, 1, char.position.x, async (xVal) => {
       char.position.x = xVal;
       await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
     });
 
     // Position Y Slider
-    const { element: ySliderGroup } = createSlider("Posisi Y", 0, 1080, 1, char.position.y, async (yVal) => {
+    const ySliderGroup = createSlider("Posisi Y", 0, 1080, 1, char.position.y, async (yVal) => {
       char.position.y = yVal;
       await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
     });
 
     // Scale Slider
-    const { element: scaleSliderGroup } = createSlider("Skala Ukuran", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
+    const scaleSliderGroup = createSlider("Skala Ukuran", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
       char.position.scale = scaleVal;
       await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
     });
@@ -496,21 +541,238 @@ const renderCharacterControllers = () => {
     deleteBtn.className = "btn btn-danger";
     deleteBtn.style.marginTop = "6px";
     deleteBtn.textContent = "Hapus Karakter";
-    deleteBtn.addEventListener("click", async () => {
+    deleteBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
       if (confirm(`Hapus karakter ${charInfo.name} dari panggung?`)) {
         advplayer.removeSandboxCharacter(charId);
         renderCharacterControllers();
       }
     });
 
-    // Append all to body
-    body.appendChild(xSliderGroup);
-    body.appendChild(ySliderGroup);
-    body.appendChild(scaleSliderGroup);
-    body.appendChild(costumeGroup);
-    body.appendChild(motionGroup);
-    body.appendChild(facialGroup);
-    body.appendChild(deleteBtn);
+    presetPane.appendChild(xSliderGroup);
+    presetPane.appendChild(ySliderGroup);
+    presetPane.appendChild(scaleSliderGroup);
+    presetPane.appendChild(costumeGroup);
+    presetPane.appendChild(motionGroup);
+    presetPane.appendChild(facialGroup);
+    presetPane.appendChild(deleteBtn);
+
+    // ==================== CUSTOM TAB PANE ====================
+    const charInstance = advplayer.getCharacterInstance(charId) as any;
+    const activeGesture = charInstance ? charInstance.activeGesture : { L: '', R: '' };
+
+    // 1. Hand Gestures
+    const gesturesTitle = document.createElement("div");
+    gesturesTitle.className = "custom-section-title";
+    gesturesTitle.textContent = "Hand Gestures";
+    customPane.appendChild(gesturesTitle);
+
+    const gestureTypes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    (['L', 'R'] as const).forEach(side => {
+      const row = document.createElement("div");
+      row.className = "gesture-row";
+
+      const label = document.createElement("span");
+      label.className = "gesture-side-label";
+      label.textContent = side === 'L' ? 'Left' : 'Right';
+      row.appendChild(label);
+
+      gestureTypes.forEach(type => {
+        const btn = document.createElement("button");
+        btn.className = "gesture-btn";
+        btn.textContent = type;
+        if (activeGesture[side] === type) {
+          btn.classList.add("active");
+        }
+
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          if (activeGesture[side] === type) {
+            activeGesture[side] = '';
+            await advplayer.resetHandGestures(charId);
+            if (activeGesture.L) await advplayer.setHandGesture(charId, 'L', activeGesture.L);
+            if (activeGesture.R) await advplayer.setHandGesture(charId, 'R', activeGesture.R);
+          } else {
+            activeGesture[side] = type;
+            await advplayer.setHandGesture(charId, side, type);
+          }
+          // Refresh local styling for instant smooth feedback
+          row.querySelectorAll(".gesture-btn").forEach(b => b.classList.remove("active"));
+          if (activeGesture[side] === type) {
+            btn.classList.add("active");
+          }
+        });
+
+        row.appendChild(btn);
+      });
+      customPane.appendChild(row);
+    });
+
+    // 2. Bone Transform Sliders
+    const bonesTitle = document.createElement("div");
+    bonesTitle.className = "custom-section-title";
+    bonesTitle.style.marginTop = "8px";
+    bonesTitle.textContent = "Bone Rotations";
+    customPane.appendChild(bonesTitle);
+
+    const bones = advplayer.getBones(charId);
+    if (bones && bones.length > 0) {
+      const categories: Record<string, any[]> = {
+        "Fingers": [],
+        "Arms": [],
+        "Head & Face": [],
+        "Torso": [],
+        "Legs": [],
+        "Others": []
+      };
+
+      bones.forEach((bone: any) => {
+        const name = (bone.data.name as string).toLowerCase();
+        if (/thumb|index|middle|ring|pinky|finger|yubi/.test(name)) {
+          categories["Fingers"].push(bone);
+        } else if (/arm|elbow|wrist|shoulder|hand/.test(name)) {
+          categories["Arms"].push(bone);
+        } else if (/head|neck|eye|brow|mouth|lip|hair|ear|jaw|cheek/.test(name)) {
+          categories["Head & Face"].push(bone);
+        } else if (/spine|hip|chest|pelvis|bust|root/.test(name)) {
+          categories["Torso"].push(bone);
+        } else if (/leg|knee|foot|ankle|toe/.test(name)) {
+          categories["Legs"].push(bone);
+        } else {
+          categories["Others"].push(bone);
+        }
+      });
+
+      Object.keys(categories).forEach(catName => {
+        const group = categories[catName];
+        if (group.length === 0) return;
+
+        const details = document.createElement("details");
+        details.style.marginBottom = "6px";
+        
+        const summary = document.createElement("summary");
+        summary.style.fontWeight = "600";
+        summary.style.cursor = "pointer";
+        summary.style.color = "#a78bfa";
+        summary.style.fontSize = "12px";
+        summary.style.padding = "2px 0";
+        summary.textContent = `${catName} (${group.length})`;
+        details.appendChild(summary);
+
+        group.forEach((bone: any) => {
+          const boneName = bone.data.name;
+          const item = document.createElement("div");
+          item.className = "slider-item";
+          item.style.marginTop = "4px";
+          const currentRotation = bone.rotation || 0;
+
+          item.innerHTML = `
+            <div class="slider-label-row">
+              <span style="font-size: 11px; color: #8c858e;">${boneName}</span>
+              <span class="slider-value" style="font-size: 11px; color: #f3f0f5;">${currentRotation.toFixed(1)}°</span>
+            </div>
+            <input type="range" class="char-slider" min="-180" max="180" step="0.5" value="${currentRotation}">
+          `;
+          details.appendChild(item);
+
+          const slider = item.querySelector("input") as HTMLInputElement;
+          const valEl = item.querySelector(".slider-value") as HTMLElement;
+
+          slider.addEventListener("input", async (e) => {
+            e.stopPropagation();
+            const rot = parseFloat(slider.value);
+            valEl.textContent = `${rot.toFixed(1)}°`;
+            await advplayer.setBoneTransform(charId, boneName, rot);
+          });
+        });
+
+        customPane.appendChild(details);
+      });
+    }
+
+    // 3. Animation Scrubbers
+    const animsTitle = document.createElement("div");
+    animsTitle.className = "custom-section-title";
+    animsTitle.style.marginTop = "8px";
+    animsTitle.textContent = "Animation Scrubbers";
+    customPane.appendChild(animsTitle);
+
+    const animations = advplayer.getAnimations(charId);
+    if (animations && animations.length > 0) {
+      const grouped: Record<string, string[]> = {};
+      animations.forEach((anim: any) => {
+        const name = anim.name as string;
+        const prefix = name.includes("/") ? name.split("/")[0] : "other";
+        if (!grouped[prefix]) grouped[prefix] = [];
+        grouped[prefix].push(name);
+      });
+
+      let trackCounter = 10;
+
+      Object.keys(grouped).sort().forEach(group => {
+        const animNames = grouped[group];
+        const details = document.createElement("details");
+        details.style.marginBottom = "6px";
+        
+        const summary = document.createElement("summary");
+        summary.style.fontWeight = "600";
+        summary.style.cursor = "pointer";
+        summary.style.color = "#a78bfa";
+        summary.style.fontSize = "12px";
+        summary.style.padding = "2px 0";
+        summary.textContent = `${group} (${animNames.length})`;
+        details.appendChild(summary);
+
+        animNames.forEach(animName => {
+          const trackIdx = trackCounter++;
+          const item = document.createElement("div");
+          item.className = "slider-item";
+          item.style.marginTop = "4px";
+          const shortName = animName.includes("/") ? animName.split("/")[1] : animName;
+
+          const savedProgress = charInstance?.activeAnimationScrubbers.get(animName) || 0;
+          const savedPercentage = Math.round(savedProgress * 100);
+
+          item.innerHTML = `
+            <div class="slider-label-row">
+              <span style="font-size: 11px; color: #8c858e;">${shortName}</span>
+              <span class="slider-value" style="font-size: 11px; color: #f3f0f5;">${savedPercentage}%</span>
+            </div>
+            <input type="range" class="char-slider" min="0" max="100" step="1" value="${savedPercentage}">
+          `;
+          details.appendChild(item);
+
+          const slider = item.querySelector("input") as HTMLInputElement;
+          const valEl = item.querySelector(".slider-value") as HTMLElement;
+
+          slider.addEventListener("input", async (e) => {
+            e.stopPropagation();
+            const progress = parseInt(slider.value) / 100;
+            valEl.textContent = `${slider.value}%`;
+            await advplayer.scrubAnimation(charId, trackIdx, animName, progress);
+          });
+        });
+
+        customPane.appendChild(details);
+      });
+    }
+
+    // 4. Reset Pose Button
+    const resetBtn = document.createElement("button");
+    resetBtn.className = "btn btn-secondary";
+    resetBtn.style.marginTop = "10px";
+    resetBtn.textContent = "Reset Pose";
+    resetBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      await advplayer.resetToSetupPose(charId);
+      renderCharacterControllers();
+    });
+    customPane.appendChild(resetBtn);
+
+    // Assemble all to body
+    body.appendChild(tabsHeader);
+    body.appendChild(presetPane);
+    body.appendChild(customPane);
 
     card.appendChild(header);
     card.appendChild(body);

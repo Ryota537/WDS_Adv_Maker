@@ -590,6 +590,38 @@ export class AdvPlayer extends Container<any> {
     }
   }
 
+  public getBones(charId: string) {
+    return this._characterView.getBones(charId);
+  }
+
+  public setBoneTransform(charId: string, boneName: string, rotation?: number, scaleX?: number, scaleY?: number) {
+    this._characterView.setBoneTransform(charId, boneName, rotation, scaleX, scaleY);
+  }
+
+  public getAnimations(charId: string) {
+    return this._characterView.getAnimations(charId);
+  }
+
+  public scrubAnimation(charId: string, trackIndex: number, animName: string, progressRatio: number) {
+    this._characterView.scrubAnimation(charId, trackIndex, animName, progressRatio);
+  }
+
+  public resetToSetupPose(charId: string) {
+    this._characterView.resetToSetupPose(charId);
+  }
+
+  public setHandGesture(charId: string, side: 'L' | 'R', type: string) {
+    this._characterView.setHandGesture(charId, side, type);
+  }
+
+  public resetHandGestures(charId: string) {
+    this._characterView.resetHandGestures(charId);
+  }
+
+  public getCharacterInstance(charId: string) {
+    return this._characterView.getCharacterInstance(charId);
+  }
+
   public exportSceneToJson() {
     exportSceneToJson(this.getSandboxState());
   }

@@ -265,4 +265,44 @@ export class CharacterView extends IView implements episodeExecutable{
             .map(item => item.character!.sandboxState);
     }
 
+    public getBones(charId: string) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        return record?.character?.getBones() ?? [];
+    }
+
+    public setBoneTransform(charId: string, boneName: string, rotation?: number, scaleX?: number, scaleY?: number) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        record?.character?.setBoneTransform(boneName, rotation, scaleX, scaleY);
+    }
+
+    public getAnimations(charId: string) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        return record?.character?.getAnimations() ?? [];
+    }
+
+    public scrubAnimation(charId: string, trackIndex: number, animName: string, progressRatio: number) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        record?.character?.scrubAnimation(trackIndex, animName, progressRatio);
+    }
+
+    public resetToSetupPose(charId: string) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        record?.character?.resetToSetupPose();
+    }
+
+    public setHandGesture(charId: string, side: 'L' | 'R', type: string) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        record?.character?.setHandGesture(side, type);
+    }
+
+    public resetHandGestures(charId: string) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        record?.character?.resetHandGestures();
+    }
+
+    public getCharacterInstance(charId: string) {
+        const record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
+        return record?.character;
+    }
+
 }

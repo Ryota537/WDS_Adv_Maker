@@ -528,6 +528,109 @@
       transition: all 0.3s ease;
     }
 
+    /* Character Nested Tabs Styles */
+    .char-card-tabs-header {
+      display: flex;
+      background: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .char-card-tab-btn {
+      flex: 1;
+      padding: 8px 4px;
+      background: none;
+      border: none;
+      color: #8c858e;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .char-card-tab-btn:hover {
+      color: #eae6eb;
+    }
+
+    .char-card-tab-btn.active {
+      color: #d946ef;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .char-card-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, #d946ef, #8b5cf6);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .char-card-tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .char-card-tab-pane.active {
+      display: flex;
+    }
+
+    .custom-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a78bfa;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .gesture-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin-bottom: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .gesture-side-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8c858e;
+      width: 35px;
+      flex-shrink: 0;
+    }
+
+    .gesture-btn {
+      padding: 4px 6px;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      color: #eae6eb;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .gesture-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #d946ef;
+    }
+
+    .gesture-btn.active {
+      background: #d946ef;
+      border-color: #d946ef;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
     .char-card-header {
       padding: 12px 16px;
       background: rgba(0, 0, 0, 0.25);

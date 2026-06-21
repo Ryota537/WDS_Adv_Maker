@@ -38,6 +38,9 @@ export class AdventureAnimationStandCharacter {
     protected _loopMotionData: ILoopMotion | undefined
     protected _eyeBlinkTimeout : number | NodeJS.Timeout | undefined;
 
+    public activeGesture = { L: "", R: "" };
+    public activeAnimationScrubbers = new Map<string, number>();
+
     constructor(spineId : number) {
         this._spineId = spineId;
         this._charId = `${this._spineId}`.slice(0, 3);
@@ -348,5 +351,83 @@ export class AdventureAnimationStandCharacter {
             
             this.SetAllAnimation(characterAnimation);
         }
+    }
+
+    // --- Deep Spine APIs for Custom Mode ---
+
+    getBones() {
+        return this._model.skeleton.bones;
+    }
+
+    setBoneTransform(boneName: string, rotation?: number, scaleX?: number, scaleY?: number) {
+        const bone = this._model.skeleton.findBone(boneName);
+        if (!bone) return;
+        if (rotation !== undefined) bone.rotation = rotation;
+        if (scaleX !== undefined) bone.scaleX = scaleX;
+        if (scaleY !== undefined) bone.scaleY = scaleY;
+    }
+
+    getAnimations() {
+        return this._model.skeleton.data.animations;
+    }
+
+    scrubAnimation(trackIndex: number, animName: string, progressRatio: number) {
+        const anim = this._model.skeleton.data.findAnimation(animName);
+        if (!anim) return;
+
+        const entry = this._model.state.setAnimation(trackIndex, animName, false);
+        entry.timeScale = 0; // pause playback
+        entry.trackTime = progressRatio * anim.duration;
+        this.activeAnimationScrubbers.set(animName, progressRatio);
+    }
+
+    resetToSetupPose() {
+        clearTimeout(this._eyeBlinkTimeout);
+        // Clear all tracks
+        this._model.state.clearTracks();
+        this._model.skeleton.setToSetupPose();
+        // Re-enable breath
+        this._model.state.setAnimation(0, "breath", true);
+        if (this._model.state.tracks[0] != null) {
+            this._model.state.tracks[0].timeScale = this._loopMotionData?.LoopSpeed || 1;
+        }
+        this._motions = {};
+        this.activeGesture = { L: "", R: "" };
+        this.activeAnimationScrubbers.clear();
+    }
+
+    setHandGesture(side: 'L' | 'R', type: string) {
+        const slotRegex = new RegExp(side + "[A-H]2?$");
+        const targetSuffix = side + type;
+
+        for (const slot of this._model.skeleton.slots) {
+            const slotName = slot.data.name;
+            if (!slotRegex.test(slotName)) continue;
+
+            const isActive = slotName.endsWith(targetSuffix) || slotName.endsWith(targetSuffix + "2");
+            const alphaValue = isActive ? 1 : 0;
+
+            Object.defineProperty(slot.color, 'a', {
+                get() { return alphaValue; },
+                set() { /* blocked — engine can't reset this */ },
+                configurable: true,
+                enumerable: true,
+            });
+        }
+
+        (this._model as any).spineAttachmentsDirty = true;
+        this.activeGesture[side] = type;
+    }
+
+    resetHandGestures() {
+        const slotRegex = /[LR][A-H]2?$/;
+        for (const slot of this._model.skeleton.slots) {
+            if (!slotRegex.test(slot.data.name)) continue;
+            // Restore normal property behavior
+            delete (slot.color as any).a;
+        }
+        (this._model as any).spineAttachmentsDirty = true;
+        this.activeGesture.L = "";
+        this.activeGesture.R = "";
     }
 }
