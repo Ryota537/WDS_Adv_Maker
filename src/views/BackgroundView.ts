@@ -252,7 +252,12 @@ export class BackgroundView extends IView implements episodeExecutable{
     if (!Assets.cache.has(bgKey)) {
       const bgUrl = resPath.background(bgId);
       Assets.add({ alias: bgKey, src: bgUrl });
-      await Assets.load(bgKey);
+      try {
+        await Assets.load(bgKey);
+      } catch (error) {
+        console.warn(`Failed to load background texture ${bgId}:`, error);
+        return;
+      }
     }
 
     // Clear any active character image card/CG overlay
@@ -261,7 +266,12 @@ export class BackgroundView extends IView implements episodeExecutable{
 
     let newbg = this._bgMap.get(bgId);
     if (!newbg) {
-      newbg = new Sprite(Assets.get(bgKey));
+      const texture = Assets.get(bgKey);
+      if (!texture) {
+        console.warn(`Background texture for key ${bgKey} not found in Assets cache.`);
+        return;
+      }
+      newbg = new Sprite(texture);
       newbg.anchor.set(0.5);
       newbg.scale.set(1.17);
       newbg.position.set(1920 / 2, 1080 / 2);

@@ -284,6 +284,239 @@
       box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.2);
       background-color: rgba(0, 0, 0, 0.45);
     }
+
+    .bg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      padding: 4px 0;
+    }
+
+    .bg-card {
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bg-card-delete {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: rgba(239, 68, 68, 0.85);
+      color: white;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      opacity: 0.8;
+      z-index: 10;
+    }
+
+    .bg-card-delete:hover {
+      background-color: rgba(239, 68, 68, 1);
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    .bg-card:hover {
+      border-color: #d946ef;
+      background-color: rgba(217, 70, 239, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .bg-card.active {
+      border-color: #d946ef;
+      background: linear-gradient(135deg, rgba(217, 70, 239, 0.15), rgba(139, 92, 246, 0.15));
+      box-shadow: 0 0 10px rgba(217, 70, 239, 0.2);
+    }
+
+    .bg-thumbnail {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background-color: #0b090c;
+      border-radius: 4px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .bg-id-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #eae6eb;
+      word-break: break-all;
+    }
+
+    .active-bg-preview-container {
+      background-color: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .active-bg-thumbnail {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background-color: #0b090c;
+      border-radius: 6px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .active-bg-id {
+      font-size: 14px;
+      font-weight: 600;
+      color: #eae6eb;
+    }
+
+    .bg-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #d946ef, #8b5cf6);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(217, 70, 239, 0.3);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #eae6eb;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    /* Modal/Pop-up Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, #1e1923, #120e16);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.open .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f3f0f5;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: #8c858e;
+      font-size: 28px;
+      font-weight: 300;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      line-height: 1;
+    }
+
+    .close-modal:hover {
+      color: #f3f0f5;
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
   </style>
 </head>
 
@@ -321,12 +554,37 @@
             Kontrol Karakter akan segera hadir.</p>
         </div>
         <div id="tab-background" class="tab-pane">
-          <p style="color: #8c858e; font-style: italic; text-align: center; margin-top: 24px; font-size: 14px;">Fitur
-            Kontrol Background akan segera hadir.</p>
+          <div class="active-bg-preview-container">
+            <div id="active-bg-thumbnail" class="active-bg-thumbnail"></div>
+            <div id="active-bg-id" class="active-bg-id">No background selected</div>
+          </div>
+          <div class="bg-actions">
+            <button id="select-bg-btn" class="btn btn-primary">Select Background</button>
+            <label class="btn btn-secondary" style="margin: 0; display: flex; align-items: center; justify-content: center;">
+              Upload Custom BG
+              <input type="file" id="upload-bg-input" accept="image/*" style="display: none;" />
+            </label>
+          </div>
         </div>
       </div>
     </aside>
   </div>
+
+  <!-- Modal Pop-up untuk Pemilihan Background -->
+  <div id="bg-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Pilih Latar Belakang</h3>
+        <button class="close-modal" id="close-bg-modal-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="bg-grid-container" class="bg-grid">
+          <p style="color: #8c858e; font-style: italic; text-align: center; width: 100%;">Loading backgrounds...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/src/index.ts"></script>
 </body>
 
