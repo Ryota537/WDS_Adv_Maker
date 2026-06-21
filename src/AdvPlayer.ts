@@ -25,11 +25,11 @@ import { createEmptySprite } from "./utils/emptySprite";
 import { resPath } from "./utils/resPath";
 import { loadJson, loadResourcesFromEpisode, loadPlayerAssetsBundle } from './utils/loadResources'
 import { banner, TrackLog } from "./utils/logger";
-import { exportSceneToJson } from "./utils/sandboxStorage";
+import { exportSceneToJson, importSceneFromJson } from "./utils/sandboxStorage";
 
 export class AdvPlayer extends Container<any> {
   //init
-  protected _inited : boolean = false;
+  protected _inited: boolean = false;
   protected _loadPromise: Promise<any> | undefined;
   protected _isSandboxMode: boolean = false;
 
@@ -53,7 +53,7 @@ export class AdvPlayer extends Container<any> {
   protected _effectView!: EffectView;
   protected _textView!: TextView;
   protected _movieView!: MovieView;
-  protected _fadeView! : FadeView;
+  protected _fadeView!: FadeView;
   // protected _historyView: HistoryView;
   protected _uiView!: UIView;
   protected _coverOpening!: CoverOpening;
@@ -67,7 +67,7 @@ export class AdvPlayer extends Container<any> {
   protected _isAuto: boolean = false;
   protected _isVoice: boolean = true;
   protected _isAdventureEnded: boolean = false;
-  protected _processing: (()=>Promise<any>)[] = [];
+  protected _processing: (() => Promise<any>)[] = [];
   protected _trackPromise: Promise<boolean> | undefined;
   // recorder
   protected _isRecord: Boolean = false;
@@ -79,7 +79,7 @@ export class AdvPlayer extends Container<any> {
     super();
 
     //advPlayer setting
-    this.addChild(createEmptySprite({ empty : true, color: 0x000000 }));
+    this.addChild(createEmptySprite({ empty: true, color: 0x000000 }));
     this.sortableChildren = true;
     this.eventMode = "static";
     document.addEventListener("visibilitychange", this._handleVisibilityChange);
@@ -88,16 +88,16 @@ export class AdvPlayer extends Container<any> {
     banner();
   }
 
-  public static async create<C extends Container>(pixiapp? : C): Promise<AdvPlayer> {
+  public static async create<C extends Container>(pixiapp?: C): Promise<AdvPlayer> {
     const self = new this();
-    if(pixiapp){
+    if (pixiapp) {
       self.addTo(pixiapp);
     }
     await self.init();
     return self;
   }
 
-  public async init(){
+  public async init() {
     await loadPlayerAssetsBundle('baseAssets', baseAssets);
 
     //views
@@ -119,14 +119,14 @@ export class AdvPlayer extends Container<any> {
     // ui button setting
     this._uiView.AutoBtn.addclickFun(() => {
       this._isAuto = this._uiView!.AutoBtn.Pressed;
-      if(this._trackPromise && this._isAuto){
+      if (this._trackPromise && this._isAuto) {
         this._trackPromise = this._trackPromise.then((
-          previous_then_not_execute : boolean
-        )=>{
-          if(!this._isAuto){ //如果不是在auto下就返回
+          previous_then_not_execute: boolean
+        ) => {
+          if (!this._isAuto) { //如果不是在auto下就返回
             return true; // 返回未播放信息
           }
-          if(previous_then_not_execute){ //如果未播放過
+          if (previous_then_not_execute) { //如果未播放過
             this._trackPromise = void 0; //清除Promise
             this._renderFrame(); //播放
           }
@@ -191,55 +191,55 @@ export class AdvPlayer extends Container<any> {
       }
 
       //如果有翻譯語言 就load該語言的翻譯文件
-      if(translate){
+      if (translate) {
         let hasTranslate = await this._translationController.load({
-          EpId : source.EpisodeId,
-          loadParser : translate,
+          EpId: source.EpisodeId,
+          loadParser: translate,
         });
         //如果有翻譯文件 ui配置&load font asset
-        if(hasTranslate){
+        if (hasTranslate) {
           this._uiView.enableTLBtn();
           this._textView.isTranslate = hasTranslate;
-          this._uiView.TranslateBtn.addclickFun(()=>{
+          this._uiView.TranslateBtn.addclickFun(() => {
             this._textView.isTranslate = this._uiView.TranslateBtn.Pressed;
             this._textView.toggleTextContent();
           })
           //font asset 
           const TLfont = this._translationController.getFont();
-          if(TLfont){
+          if (TLfont) {
             this._textView.addFontFamily(TLfont.family);
             this._coverOpening.addFontFamily(TLfont.family);
-            if(!Assets.cache.has(TLfont.url)){
+            if (!Assets.cache.has(TLfont.url)) {
               this._coverOpening.log('loading assets...');
               await Assets.load(TLfont.url);
             }
           }
         }
       }
-      
+
       this._episode = source as IEpisodeModel;
       this._coverOpening?.init({
-          type: this._episode.StoryType,
-          chapter: this._episode.Chapter,
-          title: this._episode.Title,
-          order: this._episode.Order,
-          TLTitle : this._translationController.translateModel?.TLTitle,
-          TLChapter : this._translationController.translateModel?.TLChapter,
-          
-          info : this._translationController.translateModel?.info
+        type: this._episode.StoryType,
+        chapter: this._episode.Chapter,
+        title: this._episode.Title,
+        order: this._episode.Order,
+        TLTitle: this._translationController.translateModel?.TLTitle,
+        TLChapter: this._translationController.translateModel?.TLChapter,
+
+        info: this._translationController.translateModel?.info
       });
 
       //load故事所需的資源
       let loadResources = await loadResourcesFromEpisode(
-        source, 
-        this._isVoice, 
+        source,
+        this._isVoice,
         (percentage) => this._coverOpening?.progress(Math.floor(percentage * 100))
       )
-      .catch(() => this._coverOpening?.error());
+        .catch(() => this._coverOpening?.error());
 
       //設置聲音controller的語音開關
       this.isVoice = loadResources?.isVoice ?? this._isVoice;
-      
+
       res(this._episode);
     }));
   }
@@ -280,14 +280,14 @@ export class AdvPlayer extends Container<any> {
     if (this._isAuto) {
       setTimeout(() => {
         this._play();
-      },3000);
+      }, 3000);
     } else {
       this._coverOpening?.once("pointertap", this._play, this);
     }
-}
+  }
 
   protected _play() {
-    this._coverOpening?.close(()=>{
+    this._coverOpening?.close(() => {
       setTimeout(() => {
         //set click event
         this.on("pointertap", this._tap, this);
@@ -296,17 +296,17 @@ export class AdvPlayer extends Container<any> {
     });
 
     //ui view showing
-    if(this._isAuto){
+    if (this._isAuto) {
       this._uiView!.AutoBtn.Pressed = this._isAuto;
       this._uiView!.hide();
     }
-    else{
+    else {
       this._uiView!.alpha = 1;
     }
-    
+
     this._preRenderFrame();
   }
-  
+
   protected _next() {
     this._currentIndex++;
     return this.currentTrack;
@@ -317,12 +317,12 @@ export class AdvPlayer extends Container<any> {
   //   if(order < 0 || order >= this._episode.EpisodeDetail.length) return;
   // }
 
-  protected async _preRenderFrame(){
-    if(this._currentIndex != 0 || !this.currentTrack) return;
+  protected async _preRenderFrame() {
+    if (this._currentIndex != 0 || !this.currentTrack) return;
     this._characterView.preCreateCharacterModel(this.currentTrack);
     this._effectView.execute(this.currentTrack);
     this._backgroundView.execute(this.currentTrack);
-    
+
     //當播完聲音後 停止spine的口部動作
     this._soundController.onVoiceEnd = this._characterView.offAllLipSync.bind(this._characterView);
   }
@@ -340,7 +340,7 @@ export class AdvPlayer extends Container<any> {
       return;
     }
 
-    TrackLog(index+1, this.Track!.length, this.currentTrack);
+    TrackLog(index + 1, this.Track!.length, this.currentTrack);
 
     if (this._translationController.hasTranslate) {
       let tl = this._translationController.findTranslate(this.currentTrack.Id);
@@ -360,15 +360,15 @@ export class AdvPlayer extends Container<any> {
     }
 
     //第一次無須執行 preRenderFrame已經處理過 
-    if(index > 0){
+    if (index > 0) {
       //effect處理
       //檢查下一個unit是否需要隱藏WindowEffect
       this._effectView.nextShouldHide = !this.nextTrack?.WindowEffect;
       let effect_process = this._effectView.execute(this.currentTrack);
-      if(!!effect_process){
+      if (!!effect_process) {
         this._processing.push(effect_process);
       }
-      
+
       //背景處理
       let bg_process = this._backgroundView.execute(this.currentTrack);
       if (!!bg_process) {
@@ -377,7 +377,7 @@ export class AdvPlayer extends Container<any> {
     };
 
     //有動畫要處理的話 就隱藏對話框及角色
-    if(this._processing.length > 0){
+    if (this._processing.length > 0) {
       await this._textView.hideTextPanelAnimation();
       this._characterView.hideCharacter(); //隱藏在場上的角色
     }
@@ -386,11 +386,11 @@ export class AdvPlayer extends Container<any> {
     this._soundController.sound(this.currentTrack);
 
     // Animations 確保動畫先跑完
-    await Promise.all(this._processing.map((_p)=>_p()))
+    await Promise.all(this._processing.map((_p) => _p()))
       .then(() => {
         this._processing = [];
       });
-    
+
     //影片處理
     let movie_process = this._movieView.execute(this.currentTrack);
     if (movie_process) {
@@ -398,11 +398,11 @@ export class AdvPlayer extends Container<any> {
       await this._textView.hideTextPanelAnimation();//
       await movie_process(); //確保影片跑完
     }
-    
+
     //spine處理
     //如果有characterImage，則不顯示spine
     this._characterView.execute(this.currentTrack);
-    
+
     //對話處理
     let phrase = this.currentTrack.Phrase;
     let isSameGroup = this.currentTrack.GroupOrder == this.nextTrack?.GroupOrder;
@@ -410,21 +410,21 @@ export class AdvPlayer extends Container<any> {
     this._textView.execute(this.currentTrack);
 
     //聲音處理
-    if(!this.isVoice){
+    if (!this.isVoice) {
       //如果沒開聲音 口部動作時間就用文字時間來設定
       this._soundController.voiceDuration = (this._textView.typingTotalDuration ?? 0) * 2.5;
     }
     this._soundController.voice(this.currentTrack);
-    
+
     //準備下一個unit
     this._next();
     this._characterView.preCreateCharacterModel(this.currentTrack);
 
     // 計算等候時間
     let duration = Math.max(
-      this._soundController.voiceDuration, 
-      this._soundController.seDuration, 
-      this._textView.typingTotalDuration ?? 0 
+      this._soundController.voiceDuration,
+      this._soundController.seDuration,
+      this._textView.typingTotalDuration ?? 0
     );
 
     // 沒有文字或者同組就自動跳下一個
@@ -432,7 +432,7 @@ export class AdvPlayer extends Container<any> {
       if (isSameGroup) {
         duration += 1200;
       }
-      
+
       setTimeout(() => {
         //確保按下了一次後不會繼續
         if (index + 1 === this._currentIndex) {
@@ -471,7 +471,7 @@ export class AdvPlayer extends Container<any> {
         res(true);
       }, duration + 1000);
     }));
-    
+
   }
 
   protected _onBlur() {
@@ -496,8 +496,8 @@ export class AdvPlayer extends Container<any> {
     }
   }
 
-  protected _autoLock(autoString? : string){
-    if(autoString?.toLocaleLowerCase() != 'true') return;
+  protected _autoLock(autoString?: string) {
+    if (autoString?.toLocaleLowerCase() != 'true') return;
     this._isAuto = true;
     this._coverOpening?.setAuto(true);
     document.removeEventListener("visibilitychange", this._handleVisibilityChange);
@@ -523,12 +523,12 @@ export class AdvPlayer extends Container<any> {
     return this._isVoice;
   }
 
-  set isVoice(bool : boolean){
+  set isVoice(bool: boolean) {
     this._isVoice = bool;
     this._soundController.isVoice = this._isVoice;
   }
 
-  get TranslationController(){
+  get TranslationController() {
     return this._translationController;
   }
 
@@ -537,11 +537,11 @@ export class AdvPlayer extends Container<any> {
   }
 
   public async updateSandboxCharacter(
-    charId: string, 
-    costumeId: string, 
-    motion: string, 
-    facial: string, 
-    position: {x: number, y: number, scale: number}
+    charId: string,
+    costumeId: string,
+    motion: string,
+    facial: string,
+    position: { x: number, y: number, scale: number }
   ) {
     await this._characterView.updateSandboxCharacter(charId, costumeId, motion, facial, position);
   }
@@ -564,17 +564,17 @@ export class AdvPlayer extends Container<any> {
 
   public async applySandboxState(state: any) {
     if (!state) return;
-    
+
     // Restore Background
     if (state.backgroundId) {
       await this.setSandboxBackground(state.backgroundId);
     }
-    
+
     // Restore Text/Dialogue
     if (state.dialogue) {
       this.setSandboxText(state.dialogue.speakerName || '', state.dialogue.dialogueText || '');
     }
-    
+
     // Restore Characters
     this._characterView.clear();
     if (Array.isArray(state.characters)) {
@@ -594,4 +594,14 @@ export class AdvPlayer extends Container<any> {
     exportSceneToJson(this.getSandboxState());
   }
 
+  public importSceneFromJson = async (jsonFile: File) => {
+    try {
+      const state = await importSceneFromJson(jsonFile);
+      await this.applySandboxState(state);
+      return true;
+    } catch (error) {
+      console.error("Failed to import scene from JSON:", error);
+      throw error;
+    }
+  };
 }
