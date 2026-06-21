@@ -5,6 +5,7 @@ import LoopMotion from "../constant/LoopMotion";
 import ChangeBodyMotion from "../constant/ChangeBodyMotion";
 import BodyMotion from "../constant/BodyMotion";
 import FacialExpression from "../constant/FacialExpression";
+import HeadDirection from "../constant/HeadDirection";
 
 export interface characterAnimation {
     bodyAnimationName : string,
@@ -181,7 +182,7 @@ export class AdventureAnimationStandCharacter {
             this._model.state.setAnimation(8, headMotionName, false);
         }
 
-        this._motions = characterAnimation;
+        this._motions = { ...this._motions, ...characterAnimation };
     }
 
     _eyeBlinkAnimation(trackIndex: number, animationName: string, time : number = 1){
@@ -279,12 +280,17 @@ export class AdventureAnimationStandCharacter {
         return this._motions.FacialExpressionMasterId || 0;
     }
 
+    get currentHeadDirection(): string {
+        return this._motions.headAnimationName || "";
+    }
+
     get sandboxState() {
         return {
             charId: this.charId,
             costumeId: this.costumeId,
             motion: this.currentMotion,
             facial: String(this.currentFacial),
+            headDirection: this.currentHeadDirection,
             position: {
                 x: this._model.x,
                 y: this._model.y,
@@ -296,6 +302,24 @@ export class AdventureAnimationStandCharacter {
     setPositionCoords(x: number, y: number) {
         this._model.x = x;
         this._model.y = y;
+    }
+
+    setHeadDirection(direction: string | number) {
+        let directionName = "";
+        if (typeof direction === "number" || !isNaN(Number(direction))) {
+            const id = typeof direction === "number" ? direction : parseInt(direction, 10);
+            const found = HeadDirection.find((hd) => hd.Id === id);
+            if (found) {
+                directionName = found.DirectionName;
+            }
+        } else {
+            directionName = direction as string;
+        }
+
+        if (directionName && this.checkhasAnimation(directionName)) {
+            this._model.state.setAnimation(7, directionName, false);
+            this._motions.headAnimationName = directionName;
+        }
     }
 
     setBodyMotion(motion: string | number) {

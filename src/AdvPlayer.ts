@@ -541,9 +541,10 @@ export class AdvPlayer extends Container<any> {
     costumeId: string,
     motion: string,
     facial: string,
+    headDirection: string,
     position: { x: number, y: number, scale: number }
   ) {
-    await this._characterView.updateSandboxCharacter(charId, costumeId, motion, facial, position);
+    await this._characterView.updateSandboxCharacter(charId, costumeId, motion, facial, headDirection, position);
   }
 
   public removeSandboxCharacter(charId: string) {
@@ -584,6 +585,7 @@ export class AdvPlayer extends Container<any> {
           char.costumeId,
           char.motion,
           char.facial,
+          char.headDirection || "head/normal",
           char.position
         );
       }

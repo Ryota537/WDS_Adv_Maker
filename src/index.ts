@@ -7,6 +7,7 @@ import { saveCustomBackground, getCustomBackgrounds, deleteCustomBackground } fr
 import { CHARACTER_MAP, THEATER_ORDER } from "./constant/charList";
 import BodyMotion from "./constant/BodyMotion";
 import FacialExpression from "./constant/FacialExpression";
+import HeadDirection from "./constant/HeadDirection";
 
 declare global {
   interface Window {
@@ -156,6 +157,7 @@ const defaultSandboxState = {
       costumeId: "01",
       motion: "body/sad",
       facial: "202",
+      headDirection: "head/normal",
       position: {
         x: 960,
         y: 1080,
@@ -557,7 +559,7 @@ const renderCharacterControllers = () => {
         // Reset custom bones, gestures, animations, etc.
         await advplayer.resetToSetupPose(charId);
         // Re-apply preset states
-        await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
+        await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
       } else {
         // Reset preset animations to have a clean setup pose for custom posing
         await advplayer.resetToSetupPose(charId);
@@ -610,19 +612,19 @@ const renderCharacterControllers = () => {
     // Position X Slider
     const xSliderGroup = createSlider("Posisi X", 0, 1920, 1, char.position.x, async (xVal) => {
       char.position.x = xVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
 
     // Position Y Slider
     const ySliderGroup = createSlider("Posisi Y", 0, 1080, 1, char.position.y, async (yVal) => {
       char.position.y = yVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
 
     // Scale Slider
     const scaleSliderGroup = createSlider("Skala Ukuran", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
       char.position.scale = scaleVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
 
     // Costume Dropdown
@@ -641,7 +643,7 @@ const renderCharacterControllers = () => {
     costumeSelect.addEventListener("change", async (e) => {
       const costumeVal = (e.target as HTMLSelectElement).value;
       char.costumeId = costumeVal;
-      await advplayer.updateSandboxCharacter(charId, costumeVal, char.motion, char.facial, char.position);
+      await advplayer.updateSandboxCharacter(charId, costumeVal, char.motion, char.facial, char.headDirection || "head/normal", char.position);
     });
     costumeGroup.appendChild(costumeSelect);
 
@@ -661,7 +663,7 @@ const renderCharacterControllers = () => {
     motionSelect.addEventListener("change", async (e) => {
       const motionVal = (e.target as HTMLSelectElement).value;
       char.motion = motionVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, motionVal, char.facial, char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, motionVal, char.facial, char.headDirection || "head/normal", char.position);
     });
     motionGroup.appendChild(motionSelect);
 
@@ -681,9 +683,29 @@ const renderCharacterControllers = () => {
     facialSelect.addEventListener("change", async (e) => {
       const facialVal = (e.target as HTMLSelectElement).value;
       char.facial = facialVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, facialVal, char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, facialVal, char.headDirection || "head/normal", char.position);
     });
     facialGroup.appendChild(facialSelect);
+
+    // Head Direction Dropdown
+    const headDirectionGroup = document.createElement("div");
+    headDirectionGroup.className = "slider-group";
+    headDirectionGroup.innerHTML = `<div class="slider-label-row"><span>Head Direction</span></div>`;
+    const headDirectionSelect = document.createElement("select");
+    headDirectionSelect.className = "char-dropdown";
+    HeadDirection.forEach(hd => {
+      const opt = document.createElement("option");
+      opt.value = hd.DirectionName;
+      opt.textContent = hd.DirectionName;
+      if (hd.DirectionName === (char.headDirection || "head/normal")) opt.selected = true;
+      headDirectionSelect.appendChild(opt);
+    });
+    headDirectionSelect.addEventListener("change", async (e) => {
+      const hdVal = (e.target as HTMLSelectElement).value;
+      char.headDirection = hdVal;
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, hdVal, char.position);
+    });
+    headDirectionGroup.appendChild(headDirectionSelect);
 
     // Delete Button
     const deleteBtn = document.createElement("button");
@@ -704,6 +726,7 @@ const renderCharacterControllers = () => {
     presetPane.appendChild(costumeGroup);
     presetPane.appendChild(motionGroup);
     presetPane.appendChild(facialGroup);
+    presetPane.appendChild(headDirectionGroup);
     presetPane.appendChild(deleteBtn);
 
     // ==================== CUSTOM TAB PANE ====================
@@ -1029,7 +1052,7 @@ addCharacterBtn?.addEventListener("click", async () => {
     addCharacterBtn.disabled = true;
     addCharacterBtn.textContent = "Loading...";
 
-    await advplayer.updateSandboxCharacter(charId, costumeId, motion, facial, position);
+    await advplayer.updateSandboxCharacter(charId, costumeId, motion, facial, "head/normal", position);
     renderCharacterControllers();
   } catch (error) {
     console.error("Failed to add character:", error);

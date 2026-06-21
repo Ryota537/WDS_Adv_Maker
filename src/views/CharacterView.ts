@@ -172,6 +172,7 @@ export class CharacterView extends IView implements episodeExecutable{
         costumeId: string, 
         motion: string, 
         facial: string, 
+        headDirection: string,
         position: {x: number, y: number, scale: number}
     ) {
         const spineId = parseInt(charId + costumeId, 10);
@@ -242,6 +243,9 @@ export class CharacterView extends IView implements episodeExecutable{
             }
             if (facial) {
                 model.setFacialExpression(facial);
+            }
+            if (headDirection) {
+                model.setHeadDirection(headDirection);
             }
         }
     }

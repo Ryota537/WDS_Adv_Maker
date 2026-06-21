@@ -13,6 +13,7 @@ export interface ISandboxExportedState {
     costumeId: string;
     motion: string;
     facial: string;
+    headDirection?: string;
     position: {
       x: number;
       y: number;
@@ -82,6 +83,9 @@ export function importSceneFromJson(jsonFile: File): Promise<ISandboxExportedSta
           }
           if (typeof char.motion !== "string" || typeof char.facial !== "string") {
             throw new Error("Invalid format: character motion and facial must be strings.");
+          }
+          if (char.headDirection !== undefined && typeof char.headDirection !== "string") {
+            throw new Error("Invalid format: character headDirection must be a string.");
           }
           if (typeof char.position !== "object" || char.position === null) {
             throw new Error("Invalid format: character position must be an object.");
