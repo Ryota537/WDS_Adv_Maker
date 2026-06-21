@@ -8,6 +8,16 @@ import { CHARACTER_MAP, THEATER_ORDER } from "./constant/charList";
 import BodyMotion from "./constant/BodyMotion";
 import FacialExpression from "./constant/FacialExpression";
 
+declare global {
+  interface Window {
+    sandboxStorage: {
+      exportSceneToImage: () => Promise<void> | void;
+      exportSceneToJson: () => void;
+      importSceneFromJson: (file: File) => Promise<any>;
+    };
+  }
+}
+
 // ==========================================
 // Global Loading Interceptor (Jugon Animation)
 // ==========================================
@@ -348,7 +358,7 @@ uploadBgInput?.addEventListener("change", async (e) => {
   }
 });
 
-// Intercept AdvPlayer applySandboxState to update preview and character controllers appropriately
+// Intercept AdvPlayer applySandboxState to update preview, text inputs, and character controllers appropriately
 const originalApplySandboxState = advplayer.applySandboxState.bind(advplayer);
 (advplayer as any).applySandboxState = async (state: any) => {
   await originalApplySandboxState(state);
@@ -356,9 +366,79 @@ const originalApplySandboxState = advplayer.applySandboxState.bind(advplayer);
     if (state.backgroundId) {
       updateActiveBgPreview(state.backgroundId);
     }
+    if (state.dialogue) {
+      if (speakerInput) speakerInput.value = state.dialogue.speakerName || "";
+      if (dialogueInput) dialogueInput.value = state.dialogue.dialogueText || "";
+    }
     renderCharacterControllers();
   }
 };
+
+// ==========================================
+// Action Top Bar & Project Storage Bindings
+// ==========================================
+
+// Attach sandboxStorage helper functions to window as requested
+window.sandboxStorage = {
+  exportSceneToImage: () => advplayer.exportSceneToImage(),
+  exportSceneToJson: () => advplayer.exportSceneToJson(),
+  importSceneFromJson: async (file: File) => {
+    try {
+      await advplayer.importSceneFromJson(file);
+    } catch (error: any) {
+      alert("Gagal memuat proyek: " + error.message);
+    }
+  }
+};
+
+// Capture Image Button
+const btnCaptureImage = document.getElementById("btn-capture-image");
+btnCaptureImage?.addEventListener("click", () => {
+  window.sandboxStorage.exportSceneToImage();
+});
+
+// JSON Preview Modal Elements
+const btnSaveProject = document.getElementById("btn-save-project");
+const previewModal = document.getElementById("preview-modal");
+const jsonPreviewArea = document.getElementById("json-preview-area");
+const btnConfirmSave = document.getElementById("btn-confirm-save");
+const btnCancelPreview = document.getElementById("btn-cancel-preview");
+const closePreviewModalBtn = document.getElementById("close-preview-modal-btn");
+
+const closePreviewModal = () => {
+  previewModal?.classList.remove("open");
+};
+
+// Save Project Button -> Show Preview Modal
+btnSaveProject?.addEventListener("click", () => {
+  const currentState = advplayer.getSandboxState();
+  if (jsonPreviewArea) {
+    jsonPreviewArea.textContent = JSON.stringify(currentState, null, 2);
+  }
+  previewModal?.classList.add("open");
+});
+
+closePreviewModalBtn?.addEventListener("click", closePreviewModal);
+btnCancelPreview?.addEventListener("click", closePreviewModal);
+
+// Confirm Save -> trigger export
+btnConfirmSave?.addEventListener("click", () => {
+  window.sandboxStorage.exportSceneToJson();
+  closePreviewModal();
+});
+
+// Load Project Button -> handle input change
+const btnLoadProject = document.getElementById("btn-load-project") as HTMLInputElement;
+btnLoadProject?.addEventListener("change", async (e) => {
+  const target = e.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (file) {
+    await window.sandboxStorage.importSceneFromJson(file);
+    // Reset file input value so loading the same file again triggers change event
+    target.value = "";
+  }
+});
+
 
 const initBackgroundTab = async () => {
   try {

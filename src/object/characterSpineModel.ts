@@ -157,7 +157,8 @@ export class AdventureAnimationStandCharacter {
         //如果有眨眼動作則重設眨眼動作並且眨眼, 如果沒有眨眼動作則沿用用上一次
         if(eyeAnimationName){
             clearTimeout(this._eyeBlinkTimeout);
-            this._eyeBlinkAnimation(4, eyeAnimationName, 3.5);
+            // Disabled eye blinking as requested
+            // this._eyeBlinkAnimation(4, eyeAnimationName, 3.5);
         }
 
         if(eyeMotionName && !eyeAnimationName){
