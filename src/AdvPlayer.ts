@@ -604,4 +604,38 @@ export class AdvPlayer extends Container<any> {
       throw error;
     }
   };
+
+  public async exportSceneToImage() {
+    const pixiapp = (globalThis as any).__PIXI_APP__;
+    if (!pixiapp || !pixiapp.renderer) {
+      console.error("PixiJS Application/Renderer not found.");
+      return;
+    }
+
+    // Hide default player UI buttons for a clean capture
+    const uiWasVisible = this._uiView.visible;
+    this._uiView.visible = false;
+
+    try {
+      // Force render the stage immediately to reflect the hidden UI on the canvas
+      pixiapp.render();
+
+      // Extract image directly from the canvas (handles correct clipping/cropping)
+      const base64 = pixiapp.canvas.toDataURL('image/png');
+
+      // Create download link and trigger download
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", base64);
+      downloadAnchor.setAttribute("download", "wds_sandbox_capture.png");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    } catch (error) {
+      console.error("Failed to export scene to image:", error);
+    } finally {
+      // Restore UI visibility and re-render
+      this._uiView.visible = uiWasVisible;
+      pixiapp.render();
+    }
+  }
 }
