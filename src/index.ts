@@ -8,6 +8,69 @@ import { CHARACTER_MAP, THEATER_ORDER } from "./constant/charList";
 import BodyMotion from "./constant/BodyMotion";
 import FacialExpression from "./constant/FacialExpression";
 
+// ==========================================
+// Global Loading Interceptor (Jugon Animation)
+// ==========================================
+let activeRequestsCount = 0;
+
+const showLoading = () => {
+  const el = document.getElementById('jugon-loading');
+  if (el) el.style.display = 'block';
+};
+
+const hideLoading = () => {
+  const el = document.getElementById('jugon-loading');
+  if (el) el.style.display = 'none';
+};
+
+// Intercept window.fetch
+const originalFetch = window.fetch;
+window.fetch = async (...args) => {
+  activeRequestsCount++;
+  showLoading();
+  try {
+    return await originalFetch(...args);
+  } finally {
+    activeRequestsCount--;
+    if (activeRequestsCount <= 0) {
+      activeRequestsCount = 0;
+      hideLoading();
+    }
+  }
+};
+
+// Intercept PixiJS Assets.load and Assets.loadBundle
+const originalAssetsLoad = Assets.load.bind(Assets);
+const originalAssetsLoadBundle = Assets.loadBundle.bind(Assets);
+
+Assets.load = async (...args) => {
+  activeRequestsCount++;
+  showLoading();
+  try {
+    return await originalAssetsLoad(...args);
+  } finally {
+    activeRequestsCount--;
+    if (activeRequestsCount <= 0) {
+      activeRequestsCount = 0;
+      hideLoading();
+    }
+  }
+};
+
+Assets.loadBundle = async (...args) => {
+  activeRequestsCount++;
+  showLoading();
+  try {
+    return await originalAssetsLoadBundle(...args);
+  } finally {
+    activeRequestsCount--;
+    if (activeRequestsCount <= 0) {
+      activeRequestsCount = 0;
+      hideLoading();
+    }
+  }
+};
+
 const { renderer } = getUrlParams();
 
 // Initialize PixiJS application
@@ -408,22 +471,28 @@ const renderCharacterControllers = () => {
     customPane.className = `char-card-tab-pane ${activeTab === 'custom' ? 'active' : ''}`;
 
     // Switch tab handler
-    const switchTab = (tab: 'preset' | 'custom') => {
+    const switchTab = async (tab: 'preset' | 'custom') => {
       activeCharTabs.set(charId, tab);
-      presetTabBtn.classList.toggle("active", tab === 'preset');
-      customTabBtn.classList.toggle("active", tab === 'custom');
-      presetPane.classList.toggle("active", tab === 'preset');
-      customPane.classList.toggle("active", tab === 'custom');
+      if (tab === 'preset') {
+        // Reset custom bones, gestures, animations, etc.
+        await advplayer.resetToSetupPose(charId);
+        // Re-apply preset states
+        await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.position);
+      } else {
+        // Reset preset animations to have a clean setup pose for custom posing
+        await advplayer.resetToSetupPose(charId);
+      }
+      renderCharacterControllers();
     };
 
-    presetTabBtn.addEventListener("click", (e) => {
+    presetTabBtn.addEventListener("click", async (e) => {
       e.stopPropagation(); // Avoid collapsing the card
-      switchTab('preset');
+      await switchTab('preset');
     });
 
-    customTabBtn.addEventListener("click", (e) => {
+    customTabBtn.addEventListener("click", async (e) => {
       e.stopPropagation(); // Avoid collapsing the card
-      switchTab('custom');
+      await switchTab('custom');
     });
 
     // ==================== PRESET TAB PANE ====================

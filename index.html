@@ -732,6 +732,28 @@
       border-color: rgba(239, 68, 68, 0.5);
       transform: translateY(-1px);
     }
+
+    #jugon-loading {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 100px;
+      height: 100px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      z-index: 9999;
+      pointer-events: none;
+      display: none;
+      animation: jugon-play 0.39s steps(1) infinite;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+    }
+
+    @keyframes jugon-play {
+      0% { background-image: url('./img_story_scene_illust_jugon_1.png'); }
+      33.3% { background-image: url('./img_story_scene_illust_jugon_2.png'); }
+      66.6% { background-image: url('./img_story_scene_illust_jugon_3.png'); }
+    }
   </style>
 </head>
 
@@ -809,6 +831,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Loading Jugon Animation -->
+  <div id="jugon-loading"></div>
 
   <script type="module" src="/src/index.ts"></script>
 </body>

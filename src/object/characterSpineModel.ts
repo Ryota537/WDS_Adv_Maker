@@ -51,10 +51,6 @@ export class AdventureAnimationStandCharacter {
         });
         this._model.label = this._charId;
         this._loopMotionData = LoopMotion.find((lm) => lm.TargetCharacterBaseId === this._charId);
-        this._model.state.setAnimation(0, "breath", true);
-        if (this._model.state.tracks[0] != null) {
-            this._model.state.tracks[0].timeScale = this._loopMotionData?.LoopSpeed || 1;
-        }
         // clac the y position
         switch(this._loopMotionData?.Size ?? 1){
             case 1:
@@ -386,11 +382,6 @@ export class AdventureAnimationStandCharacter {
         // Clear all tracks
         this._model.state.clearTracks();
         this._model.skeleton.setToSetupPose();
-        // Re-enable breath
-        this._model.state.setAnimation(0, "breath", true);
-        if (this._model.state.tracks[0] != null) {
-            this._model.state.tracks[0].timeScale = this._loopMotionData?.LoopSpeed || 1;
-        }
         this._motions = {};
         this.activeGesture = { L: "", R: "" };
         this.activeAnimationScrubbers.clear();
