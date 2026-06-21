@@ -26,20 +26,32 @@ export async function createApp(preference: 'webgl' | 'webgpu' = 'webgpu') {
     (globalThis as any).__PIXI_APP__ = pixiapp;
   
     pixiapp.canvas.setAttribute("id", "WDS");
-    document.body.appendChild(pixiapp.canvas);
+    const container = document.getElementById("canvas-container") || document.body;
+    container.appendChild(pixiapp.canvas);
   
     Ticker.shared.add(() => Group.shared.update());
   
     let resize = () => {
-      const screenWidth = Math.max(
-        document.documentElement.clientWidth,
-        window.innerWidth || 0
-      );
-      const screenHeight = Math.max(
-        document.documentElement.clientHeight,
-        window.innerHeight || 0
-      );
-  
+      const isMobile = window.innerWidth <= 768;
+      
+      let screenWidth = window.innerWidth;
+      let screenHeight = window.innerHeight;
+      
+      if (!isMobile) {
+        const containerEl = document.getElementById("canvas-container");
+        if (containerEl) {
+          screenWidth = containerEl.clientWidth;
+          screenHeight = containerEl.clientHeight;
+        }
+        // Scale down to 90% of container space on desktop
+        screenWidth = screenWidth * 0.9;
+        screenHeight = screenHeight * 0.9;
+      } else {
+        // On mobile, canvas is fixed/floating, make it 90% of screen width
+        screenWidth = window.innerWidth * 0.9;
+        screenHeight = screenWidth * (1080 / 1920);
+      }
+
       const ratio = Math.min(screenWidth / 1920, screenHeight / 1080);
   
       let resizedX = Math.floor(1920 * ratio);

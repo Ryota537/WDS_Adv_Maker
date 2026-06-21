@@ -1,50 +1,98 @@
 import { getUrlParams } from "./utils/UrlParams";
 import { AdvPlayer } from "./AdvPlayer";
 import { createApp } from "./utils/createApp";
-import { IRecordController, MediaRecorderController, OBSController } from "./controller/recordController";
 
-const { id, tl, at, sv, rc, obsurl, obspass, renderer } = getUrlParams();
+const { renderer } = getUrlParams();
 
+// Initialize PixiJS application
 const app = await createApp(<'webgl' | 'webgpu'> renderer);
-// const iFrameDetection = (window === window.parent);
 
-//create Adv Player
+// Create Adv Player
 const advplayer = await AdvPlayer.create(app.stage);
 (globalThis as any).advplayer = advplayer;
 
-// advplayer.loadAndPlay('2006008');
-// advplayer.loadAndPlay('1010110', 'zhcn');
+// ==========================================
+// Web UI Controls & Sandbox Integration
+// ==========================================
 
-let _id = id ?? prompt("Please enter the story Id", "1000000");
-
-if (sv && sv.toLowerCase() === 'true') {
-  let recordController: IRecordController | undefined;
-
-  switch (rc?.toLowerCase()) {
-    case 'obs':
-      if (obsurl) {
-        recordController = await OBSController.create(obsurl, obspass);
-      }
-      break;
-    case 'mediarecorder':
-    case 'mr':
-    case '':
-    case undefined:
-    default:
-      // default
-      recordController = MediaRecorderController.create(
-        app.canvas.captureStream(24),
-        // await navigator.mediaDevices.getDisplayMedia({ audio: true })
-      );
-      break;
-  }
-
-  if (recordController) {
-    if (typeof recordController.setFileName === "function") {
-      recordController.setFileName(`wds_adv_record_${_id}${tl ? `_${tl}` : ''}_${new Date().valueOf()}.mkv`);
+// Tab navigation handler
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    
+    btn.classList.add('active');
+    const tabId = btn.getAttribute('data-tab');
+    if (tabId) {
+      document.getElementById(tabId)?.classList.add('active');
     }
-    advplayer.setRecorder(recordController);
+  });
+});
+
+// Select input elements
+const sandboxToggle = document.getElementById("sandbox-toggle") as HTMLInputElement;
+const speakerInput = document.getElementById("speaker-name") as HTMLInputElement;
+const dialogueInput = document.getElementById("dialogue-text") as HTMLTextAreaElement;
+
+// Sync state helper
+const updateSandboxText = () => {
+  if (sandboxToggle && !sandboxToggle.checked) return;
+  const speaker = speakerInput?.value || "";
+  const text = dialogueInput?.value || "";
+  advplayer.setSandboxText(speaker, text);
+};
+
+// Input listeners
+speakerInput?.addEventListener("input", updateSandboxText);
+dialogueInput?.addEventListener("input", updateSandboxText);
+
+// Toggle Sandbox Mode
+sandboxToggle?.addEventListener("change", (e) => {
+  const isChecked = (e.target as HTMLInputElement).checked;
+  advplayer.isSandboxMode = isChecked;
+  if (isChecked) {
+    updateSandboxText();
   }
+});
+
+// ==========================================
+// Default Sandbox Initialization
+// ==========================================
+
+// Enable Sandbox Mode by default
+advplayer.isSandboxMode = true;
+if (sandboxToggle) {
+  sandboxToggle.checked = true;
 }
 
-_id && advplayer.loadAndPlay(_id, tl, at, sv);
+const defaultSandboxState = {
+  backgroundId: "410",
+  dialogue: {
+    speakerName: "Kokona",
+    dialogueText: "You finally here!"
+  },
+  characters: [
+    {
+      charId: "101",
+      costumeId: "01",
+      motion: "body/sad",
+      facial: "202",
+      position: {
+        x: 960,
+        y: 1080,
+        scale: 0.79
+      }
+    }
+  ]
+};
+
+// Populate editor fields
+if (speakerInput) {
+  speakerInput.value = defaultSandboxState.dialogue.speakerName;
+}
+if (dialogueInput) {
+  dialogueInput.value = defaultSandboxState.dialogue.dialogueText;
+}
+
+// Load default visual scene
+await advplayer.applySandboxState(defaultSandboxState);

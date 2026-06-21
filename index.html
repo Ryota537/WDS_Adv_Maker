@@ -7,10 +7,11 @@
     href="https://world-dai-star.com/MeNeEcJP/wp-content/themes/wds/assets/images/favicon/icon-192x192.png">
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <title>WDS Adv Player | World dai star</title>
+  <title>Yume Stories | World Dai Star Story Maker</title>
   <meta name="description" content="a ADV player for render the World Dai Star(世界大明星) in-game story.">
-  <meta name="keywords" itemprop="keywords" content="World Dai Star, ワールドダイスター, WDS, ユメステ, ゆめのステラリウム, 夢のステラリウム, Yume no Stellarium, Adv Player, ストーリー, Stories">
-  
+  <meta name="keywords" itemprop="keywords"
+    content="World Dai Star, ワールドダイスター, WDS, ユメステ, ゆめのステラリウム, 夢のステラリウム, Yume no Stellarium, Adv Player, ストーリー, Stories">
+
   <!-- Facebook Meta Tags -->
   <meta property="og:url" content="https://cpk0521.github.io/WDS_Adv_Player/">
   <meta property="og:type" content="website">
@@ -24,22 +25,308 @@
   <meta name="twitter:title" content="WDS Adv Player | World dai star">
   <meta name="twitter:description" content="a ADV player for render the World Dai Star(世界大明星) in-game story.">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/Cpk0521/WDS_Adv_Player/main/assets/cover.png">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     * {
-      margin: 0 !important;
-      padding: 0 !important;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0b090c;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #eae6eb;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    #app-layout {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      flex-direction: row;
+    }
+
+    @media (width <=768px) {
+      #app-layout {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+      }
+    }
+
+    #canvas-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #080608;
+      position: relative;
+    }
+
+    @media (width > 768px) {
+      #canvas-container {
+        height: 100dvh;
+      }
+    }
+
+    @media (width <=768px) {
+      #canvas-container {
+        height: 500px;
+      }
     }
 
     #WDS {
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      width: 90%;
+    }
+
+    @media (width <=768px) {
+      #WDS {
+        position: fixed;
+        z-index: 100;
+        top: 20px;
+        left: 5%;
+      }
+    }
+
+    #editor-sidebar {
+      background: linear-gradient(145deg, #161219, #0e0b10);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    @media (width > 768px) {
+      #editor-sidebar {
+        height: 100dvh;
+        min-width: 300px;
+        max-width: 300px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+      }
+    }
+
+    @media (width <=768px) {
+      #editor-sidebar {
+        min-height: 100dvh;
+        min-width: 100dvw;
+      }
+    }
+
+    .sidebar-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    .sidebar-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f3f0f5;
+      letter-spacing: -0.02em;
+    }
+
+    .switch-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #a78bfa;
+      cursor: pointer;
+    }
+
+    .switch-container input[type="checkbox"] {
+      position: relative;
+      width: 42px;
+      height: 22px;
+      appearance: none;
+      background-color: rgba(255, 255, 255, 0.12);
+      outline: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .switch-container input[type="checkbox"]:checked {
+      background-color: #d946ef;
+    }
+
+    .switch-container input[type="checkbox"]::before {
+      content: '';
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .switch-container input[type="checkbox"]:checked::before {
+      transform: translateX(20px);
+    }
+
+    .tabs-header {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 15px 8px;
+      background: none;
+      border: none;
+      color: #8c858e;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      outline: none;
+    }
+
+    .tab-btn:hover {
+      color: #eae6eb;
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .tab-btn.active {
+      color: #d946ef;
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      right: 20%;
+      height: 3px;
+      background: linear-gradient(90deg, #d946ef, #8b5cf6);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tabs-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a78bfa;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 14px;
+      color: #f3f0f5;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+      line-height: 1.5;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+      border-color: #d946ef;
+      box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.2);
+      background-color: rgba(0, 0, 0, 0.45);
     }
   </style>
 </head>
 
 <body>
+  <div id="app-layout">
+    <div id="canvas-container"></div>
+    <aside id="editor-sidebar">
+      <div class="sidebar-header">
+        <h2>Yume Stories</h2>
+        <!-- <label class="switch-container">
+          <span>Sandbox Mode</span>
+          <input type="checkbox" id="sandbox-toggle" />
+        </label> -->
+      </div>
+      <!-- Tab Headers -->
+      <div class="tabs-header">
+        <button class="tab-btn active" data-tab="tab-dialog">Dialogue</button>
+        <button class="tab-btn" data-tab="tab-character">Character</button>
+        <button class="tab-btn" data-tab="tab-background">Background</button>
+      </div>
+      <!-- Tab Contents -->
+      <div class="tabs-content">
+        <div id="tab-dialog" class="tab-pane active">
+          <div class="form-group">
+            <label for="speaker-name">Speaker Name</label>
+            <input type="text" id="speaker-name" placeholder="Nama karakter..." />
+          </div>
+          <div class="form-group">
+            <label for="dialogue-text">Dialogue Text</label>
+            <textarea id="dialogue-text" rows="5" placeholder="Tulis teks percakapan di sini..."></textarea>
+          </div>
+        </div>
+        <div id="tab-character" class="tab-pane">
+          <p style="color: #8c858e; font-style: italic; text-align: center; margin-top: 24px; font-size: 14px;">Fitur
+            Kontrol Karakter akan segera hadir.</p>
+        </div>
+        <div id="tab-background" class="tab-pane">
+          <p style="color: #8c858e; font-style: italic; text-align: center; margin-top: 24px; font-size: 14px;">Fitur
+            Kontrol Background akan segera hadir.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
   <script type="module" src="/src/index.ts"></script>
 </body>
 
