@@ -46,9 +46,9 @@
     }
 
     body {
-      background-color: #0b090c;
+      background-color: #F3F5F7;
       font-family: 'RoNOWStd', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: #eae6eb;
+      color: #1e1923;
       height: 100vh;
       width: 100vw;
       overflow: hidden;
@@ -107,8 +107,8 @@
     }
 
     #editor-sidebar {
-      background: linear-gradient(145deg, #161219, #0e0b10);
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: #F3F5F7;
+      border-left: 1px solid rgba(0, 0, 0, 0.08);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -133,17 +133,17 @@
 
     .sidebar-header {
       padding: 20px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: rgba(0, 0, 0, 0.15);
+      background-color: rgba(0, 0, 0, 0.02);
     }
 
     .sidebar-header h2 {
       font-size: 16px;
       font-weight: 700;
-      color: #f3f0f5;
+      color: #1e1923;
       letter-spacing: -0.02em;
     }
 
@@ -153,7 +153,7 @@
       gap: 10px;
       font-size: 13px;
       font-weight: 600;
-      color: #a78bfa;
+      color: #FF7073;
       cursor: pointer;
     }
 
@@ -162,7 +162,7 @@
       width: 42px;
       height: 22px;
       appearance: none;
-      background-color: rgba(255, 255, 255, 0.12);
+      background-color: rgba(0, 0, 0, 0.1);
       outline: none;
       border-radius: 20px;
       cursor: pointer;
@@ -170,7 +170,7 @@
     }
 
     .switch-container input[type="checkbox"]:checked {
-      background-color: #d946ef;
+      background-color: #FF7073;
     }
 
     .switch-container input[type="checkbox"]::before {
@@ -191,8 +191,8 @@
 
     .tabs-header {
       display: flex;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      background-color: rgba(0, 0, 0, 0.25);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      background-color: rgba(0, 0, 0, 0.03);
     }
 
     .tab-btn {
@@ -200,7 +200,7 @@
       padding: 15px 8px;
       background: none;
       border: none;
-      color: #8c858e;
+      color: #64748b;
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -211,12 +211,12 @@
     }
 
     .tab-btn:hover {
-      color: #eae6eb;
-      background-color: rgba(255, 255, 255, 0.02);
+      color: #1e1923;
+      background-color: rgba(0, 0, 0, 0.02);
     }
 
     .tab-btn.active {
-      color: #d946ef;
+      color: #FF7073;
     }
 
     .tab-btn.active::after {
@@ -226,7 +226,7 @@
       left: 20%;
       right: 20%;
       height: 3px;
-      background: linear-gradient(90deg, #d946ef, #8b5cf6);
+      background: #FF7073;
       border-radius: 3px 3px 0 0;
     }
 
@@ -268,17 +268,17 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #a78bfa;
+      color: #FF7073;
     }
 
     .form-group input[type="text"],
     .form-group textarea {
       width: 100%;
-      background-color: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background-color: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 8px;
       padding: 14px;
-      color: #f3f0f5;
+      color: #1e1923;
       font-family: inherit;
       font-size: 14px;
       outline: none;
@@ -288,9 +288,9 @@
 
     .form-group input[type="text"]:focus,
     .form-group textarea:focus {
-      border-color: #d946ef;
-      box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.2);
-      background-color: rgba(0, 0, 0, 0.45);
+      border-color: #FF7073;
+      box-shadow: 0 0 0 3px rgba(255, 112, 115, 0.2);
+      background-color: #ffffff;
     }
 
     .bg-grid {
@@ -302,8 +302,8 @@
 
     .bg-card {
       position: relative;
-      background-color: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 6px;
       padding: 8px 6px;
       text-align: center;
@@ -343,15 +343,15 @@
     }
 
     .bg-card:hover {
-      border-color: #d946ef;
-      background-color: rgba(217, 70, 239, 0.06);
+      border-color: #FF7073;
+      background-color: rgba(255, 112, 115, 0.05);
       transform: translateY(-2px);
     }
 
     .bg-card.active {
-      border-color: #d946ef;
-      background: linear-gradient(135deg, rgba(217, 70, 239, 0.15), rgba(139, 92, 246, 0.15));
-      box-shadow: 0 0 10px rgba(217, 70, 239, 0.2);
+      border-color: #FF7073;
+      background: rgba(255, 112, 115, 0.1);
+      box-shadow: 0 0 10px rgba(255, 112, 115, 0.2);
     }
 
     .bg-thumbnail {
@@ -361,19 +361,19 @@
       border-radius: 4px;
       background-size: cover;
       background-position: center;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .bg-id-label {
       font-size: 11px;
       font-weight: 600;
-      color: #eae6eb;
+      color: #1e1923;
       word-break: break-all;
     }
 
     .active-bg-preview-container {
-      background-color: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       padding: 16px;
       text-align: center;
@@ -392,15 +392,15 @@
       border-radius: 6px;
       background-size: cover;
       background-position: center;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
 
     .active-bg-id {
       font-size: 14px;
       font-weight: 600;
-      color: #eae6eb;
+      color: #1e1923;
     }
 
     .bg-actions {
@@ -427,9 +427,9 @@
     }
 
     .btn-primary {
-      background: linear-gradient(90deg, #d946ef, #8b5cf6);
+      background: #FF7073;
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(217, 70, 239, 0.3);
+      box-shadow: 0 4px 12px rgba(255, 112, 115, 0.3);
     }
 
     .btn-primary:hover {
@@ -438,14 +438,14 @@
     }
 
     .btn-secondary {
-      background-color: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #eae6eb;
+      background-color: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      color: #1e1923;
       cursor: pointer;
     }
 
     .btn-secondary:hover {
-      background-color: rgba(255, 255, 255, 0.12);
+      background-color: rgba(0, 0, 0, 0.03);
       transform: translateY(-1px);
     }
 
@@ -458,7 +458,7 @@
       top: 0;
       width: 100vw;
       height: 100vh;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(8px);
       align-items: center;
       justify-content: center;
@@ -472,8 +472,8 @@
     }
 
     .modal-content {
-      background: linear-gradient(145deg, #1e1923, #120e16);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 12px;
       width: 90%;
       max-width: 800px;
@@ -481,7 +481,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
       transform: scale(0.95);
       transition: transform 0.3s ease;
     }
@@ -492,23 +492,23 @@
 
     .modal-header {
       padding: 16px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.02);
     }
 
     .modal-header h3 {
       font-size: 16px;
       font-weight: 700;
-      color: #f3f0f5;
+      color: #1e1923;
     }
 
     .close-modal {
       background: none;
       border: none;
-      color: #8c858e;
+      color: #64748b;
       font-size: 28px;
       font-weight: 300;
       cursor: pointer;
@@ -517,7 +517,7 @@
     }
 
     .close-modal:hover {
-      color: #f3f0f5;
+      color: #1e1923;
     }
 
     .modal-body {
@@ -528,19 +528,20 @@
 
     /* Character Controller Card Styles */
     .char-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 10px;
       margin-bottom: 16px;
       overflow: hidden;
       transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     /* Character Nested Tabs Styles */
     .char-card-tabs-header {
       display: flex;
-      background: rgba(0, 0, 0, 0.15);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .char-card-tab-btn {
@@ -548,7 +549,7 @@
       padding: 8px 4px;
       background: none;
       border: none;
-      color: #8c858e;
+      color: #64748b;
       font-family: inherit;
       font-size: 12px;
       font-weight: 600;
@@ -558,12 +559,12 @@
     }
 
     .char-card-tab-btn:hover {
-      color: #eae6eb;
+      color: #1e1923;
     }
 
     .char-card-tab-btn.active {
-      color: #d946ef;
-      background: rgba(255, 255, 255, 0.02);
+      color: #FF7073;
+      background: rgba(0, 0, 0, 0.02);
     }
 
     .char-card-tab-btn.active::after {
@@ -573,7 +574,7 @@
       left: 25%;
       right: 25%;
       height: 2px;
-      background: linear-gradient(90deg, #d946ef, #8b5cf6);
+      background: #FF7073;
       border-radius: 2px 2px 0 0;
     }
 
@@ -592,7 +593,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #a78bfa;
+      color: #FF7073;
       margin-top: 4px;
       margin-bottom: 2px;
     }
@@ -609,7 +610,7 @@
     .gesture-side-label {
       font-size: 11px;
       font-weight: 600;
-      color: #8c858e;
+      color: #64748b;
       width: 35px;
       flex-shrink: 0;
     }
@@ -617,10 +618,10 @@
     .gesture-btn {
       padding: 4px 6px;
       font-size: 11px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 4px;
-      color: #eae6eb;
+      color: #1e1923;
       cursor: pointer;
       transition: all 0.2s ease;
       min-width: 22px;
@@ -628,21 +629,21 @@
     }
 
     .gesture-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: #d946ef;
+      background: rgba(255, 112, 115, 0.05);
+      border-color: #FF7073;
     }
 
     .gesture-btn.active {
-      background: #d946ef;
-      border-color: #d946ef;
+      background: #FF7073;
+      border-color: #FF7073;
       color: #ffffff;
       font-weight: bold;
     }
 
     .char-card-header {
       padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.25);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -652,7 +653,7 @@
     .char-card-title {
       font-size: 14px;
       font-weight: 600;
-      color: #eae6eb;
+      color: #1e1923;
     }
 
     .char-card-body {
@@ -673,18 +674,18 @@
       justify-content: space-between;
       font-size: 12px;
       font-weight: 500;
-      color: #a78bfa;
+      color: #FF7073;
     }
 
     .slider-value {
-      color: #f3f0f5;
+      color: #1e1923;
     }
 
     .char-slider {
       width: 100%;
       height: 6px;
       appearance: none;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.1);
       border-radius: 3px;
       outline: none;
     }
@@ -694,9 +695,9 @@
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: #d946ef;
+      background: #FF7073;
       cursor: pointer;
-      box-shadow: 0 0 6px rgba(217, 70, 239, 0.5);
+      box-shadow: 0 0 6px rgba(255, 112, 115, 0.5);
       transition: all 0.2s ease;
     }
 
@@ -707,10 +708,10 @@
     .char-dropdown {
       width: 100%;
       padding: 10px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.15);
       border-radius: 8px;
-      color: #f3f0f5;
+      color: #1e1923;
       font-family: inherit;
       font-size: 13px;
       outline: none;
@@ -718,18 +719,18 @@
     }
 
     .char-dropdown:focus {
-      border-color: #d946ef;
+      border-color: #FF7073;
     }
 
     .btn-danger {
-      background-color: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #f87171;
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #ef4444;
     }
 
     .btn-danger:hover {
-      background-color: rgba(239, 68, 68, 0.3);
-      border-color: rgba(239, 68, 68, 0.5);
+      background-color: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
       transform: translateY(-1px);
     }
 
@@ -737,8 +738,8 @@
       display: flex;
       padding: 12px 16px;
       gap: 8px;
-      background-color: rgba(0, 0, 0, 0.2);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .action-btn {
@@ -748,10 +749,10 @@
       justify-content: center;
       gap: 6px;
       padding: 8px 4px;
-      background-color: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 6px;
-      color: #eae6eb;
+      color: #1e1923;
       font-family: inherit;
       font-size: 12px;
       font-weight: 600;
@@ -761,8 +762,8 @@
     }
 
     .action-btn:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      border-color: #d946ef;
+      background-color: rgba(0, 0, 0, 0.02);
+      border-color: #FF7073;
       transform: translateY(-1px);
     }
 
@@ -794,7 +795,7 @@
       pointer-events: none;
       display: none;
       animation: jugon-play 0.39s steps(1) infinite;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
     }
 
     @keyframes jugon-play {
@@ -852,9 +853,9 @@
         </div>
         <div id="tab-character" class="tab-pane">
           <div class="character-actions" style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #a78bfa;">Add New Character</label>
+            <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Add New Character</label>
             <div class="add-char-row" style="display: flex; gap: 8px; align-items: center;">
-              <select id="add-character-select" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #f3f0f5; font-family: inherit; font-size: 14px; outline: none;">
+              <select id="add-character-select" style="flex: 1; padding: 10px; background: #ffffff; border: 1px solid rgba(0,0,0,0.15); border-radius: 8px; color: #1e1923; font-family: inherit; font-size: 14px; outline: none;">
                 <option value="" disabled selected>Loading characters...</option>
               </select>
               <button id="add-character-btn" class="btn btn-primary" style="width: auto; padding: 10px 16px;">Add</button>
@@ -890,7 +891,7 @@
       </div>
       <div class="modal-body">
         <div id="bg-grid-container" class="bg-grid">
-          <p style="color: #8c858e; font-style: italic; text-align: center; width: 100%;">Loading backgrounds...</p>
+          <p style="color: #64748b; font-style: italic; text-align: center; width: 100%;">Loading backgrounds...</p>
         </div>
       </div>
     </div>
@@ -904,7 +905,7 @@
         <button class="close-modal" id="close-preview-modal-btn">&times;</button>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
-        <pre id="json-preview-area" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 350px; overflow-y: auto; color: #a78bfa; white-space: pre-wrap; word-break: break-all;"></pre>
+        <pre id="json-preview-area" style="background: #f8fafc; border: 1px solid rgba(0, 0, 0, 0.08); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 350px; overflow-y: auto; color: #FF7073; white-space: pre-wrap; word-break: break-all;"></pre>
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
           <button id="btn-cancel-preview" class="btn btn-secondary" style="width: auto; padding: 8px 16px;">Cancel</button>
           <button id="btn-confirm-save" class="btn btn-primary" style="width: auto; padding: 8px 24px;">Confirm & Save</button>

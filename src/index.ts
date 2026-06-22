@@ -490,7 +490,7 @@ const renderCharacterControllers = () => {
   const activeChars = advplayer.getSandboxState().characters;
 
   if (activeChars.length === 0) {
-    characterControllersContainer.innerHTML = '<p style="color: #8c858e; font-style: italic; text-align: center; margin-top: 16px; font-size: 13px;">No characters on stage.</p>';
+    characterControllersContainer.innerHTML = '<p style="color: #64748b; font-style: italic; text-align: center; margin-top: 16px; font-size: 13px;">No characters on stage.</p>';
     return;
   }
 
@@ -514,7 +514,7 @@ const renderCharacterControllers = () => {
     header.appendChild(title);
 
     const toggleIndicator = document.createElement("span");
-    toggleIndicator.style.color = "#8c858e";
+    toggleIndicator.style.color = "#64748b";
     toggleIndicator.style.fontSize = "12px";
     toggleIndicator.textContent = "▼";
     header.appendChild(toggleIndicator);
@@ -825,7 +825,7 @@ const renderCharacterControllers = () => {
         const summary = document.createElement("summary");
         summary.style.fontWeight = "600";
         summary.style.cursor = "pointer";
-        summary.style.color = "#a78bfa";
+        summary.style.color = "#FF7073";
         summary.style.fontSize = "12px";
         summary.style.padding = "2px 0";
         summary.textContent = `${catName} (${group.length})`;
@@ -840,8 +840,8 @@ const renderCharacterControllers = () => {
 
           item.innerHTML = `
             <div class="slider-label-row">
-              <span style="font-size: 11px; color: #8c858e;">${boneName}</span>
-              <span class="slider-value" style="font-size: 11px; color: #f3f0f5;">${currentRotation.toFixed(1)}°</span>
+              <span style="font-size: 11px; color: #64748b;">${boneName}</span>
+              <span class="slider-value" style="font-size: 11px; color: #1e1923;">${currentRotation.toFixed(1)}°</span>
             </div>
             <input type="range" class="char-slider" min="-180" max="180" step="0.5" value="${currentRotation}">
           `;
@@ -889,7 +889,7 @@ const renderCharacterControllers = () => {
         const summary = document.createElement("summary");
         summary.style.fontWeight = "600";
         summary.style.cursor = "pointer";
-        summary.style.color = "#a78bfa";
+        summary.style.color = "#FF7073";
         summary.style.fontSize = "12px";
         summary.style.padding = "2px 0";
         summary.textContent = `${group} (${animNames.length})`;
@@ -907,8 +907,8 @@ const renderCharacterControllers = () => {
 
           item.innerHTML = `
             <div class="slider-label-row">
-              <span style="font-size: 11px; color: #8c858e;">${shortName}</span>
-              <span class="slider-value" style="font-size: 11px; color: #f3f0f5;">${savedPercentage}%</span>
+              <span style="font-size: 11px; color: #64748b;">${shortName}</span>
+              <span class="slider-value" style="font-size: 11px; color: #1e1923;">${savedPercentage}%</span>
             </div>
             <input type="range" class="char-slider" min="0" max="100" step="1" value="${savedPercentage}">
           `;
