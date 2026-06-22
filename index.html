@@ -76,6 +76,22 @@
       justify-content: center;
       background-color: #080608;
       position: relative;
+      overflow: hidden;
+    }
+
+    #canvas-bg-blur {
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      width: 110%;
+      height: 110%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(25px);
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+      transition: background-image 0.5s ease;
     }
 
     @media (width > 768px) {
@@ -95,6 +111,8 @@
       border-radius: 8px;
       transition: all 0.3s ease;
       width: 90%;
+      position: relative;
+      z-index: 1;
     }
 
     @media (width <=768px) {
@@ -808,7 +826,9 @@
 
 <body>
   <div id="app-layout">
-    <div id="canvas-container"></div>
+    <div id="canvas-container">
+      <div id="canvas-bg-blur"></div>
+    </div>
     <aside id="editor-sidebar">
       <div class="sidebar-header">
         <h2>Yume Stories</h2>

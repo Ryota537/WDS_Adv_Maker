@@ -188,6 +188,7 @@ const closeBgModalBtn = document.getElementById("close-bg-modal-btn");
 const activeBgThumbnail = document.getElementById("active-bg-thumbnail");
 const activeBgId = document.getElementById("active-bg-id");
 const uploadBgInput = document.getElementById("upload-bg-input") as HTMLInputElement;
+const canvasBgBlur = document.getElementById("canvas-bg-blur");
 
 // Map to track local object URLs for custom backgrounds
 const customBackgroundsMap = new Map<string, string>();
@@ -197,19 +198,33 @@ const updateActiveBgPreview = (bgId: string) => {
   if (activeBgId) {
     activeBgId.textContent = bgId.startsWith("custom_") ? "Uploaded Custom Image" : `Background: ${bgId}`;
   }
+  let finalUrl = "";
+  if (bgId.startsWith("custom_")) {
+    const customUrl = customBackgroundsMap.get(bgId);
+    if (customUrl) {
+      finalUrl = customUrl;
+    }
+  } else {
+    const imageUrl = resPath.background(bgId);
+    finalUrl = `https://wsrv.nl/?url=${encodeURIComponent(imageUrl)}&output=webp`;
+  }
+
   if (activeBgThumbnail) {
-    if (bgId.startsWith("custom_")) {
-      const customUrl = customBackgroundsMap.get(bgId);
-      if (customUrl) {
-        activeBgThumbnail.style.backgroundImage = `url('${customUrl}')`;
-      } else {
-        activeBgThumbnail.style.backgroundImage = "none";
-        activeBgId!.textContent = "Custom Image (re-upload needed)";
-      }
+    if (finalUrl) {
+      activeBgThumbnail.style.backgroundImage = `url('${finalUrl}')`;
     } else {
-      const imageUrl = resPath.background(bgId);
-      const optimizedUrl = `https://wsrv.nl/?url=${encodeURIComponent(imageUrl)}&output=webp`;
-      activeBgThumbnail.style.backgroundImage = `url('${optimizedUrl}')`;
+      activeBgThumbnail.style.backgroundImage = "none";
+      if (bgId.startsWith("custom_") && activeBgId) {
+        activeBgId.textContent = "Custom Image (re-upload needed)";
+      }
+    }
+  }
+
+  if (canvasBgBlur) {
+    if (finalUrl) {
+      canvasBgBlur.style.backgroundImage = `url('${finalUrl}')`;
+    } else {
+      canvasBgBlur.style.backgroundImage = "none";
     }
   }
 };
