@@ -32,27 +32,25 @@ export async function createApp(preference: 'webgl' | 'webgpu' = 'webgpu') {
     Ticker.shared.add(() => Group.shared.update());
   
     let resize = () => {
-      const isMobile = window.innerWidth <= 768;
-      
       let screenWidth = window.innerWidth;
       let screenHeight = window.innerHeight;
       
-      if (!isMobile) {
-        const containerEl = document.getElementById("canvas-container");
-        if (containerEl) {
-          screenWidth = containerEl.clientWidth;
-          screenHeight = containerEl.clientHeight;
-        }
-        // Scale down to 90% of container space on desktop
-        screenWidth = screenWidth * 0.9;
-        screenHeight = screenHeight * 0.9;
+      const containerEl = document.getElementById("canvas-container");
+      if (containerEl && containerEl.clientWidth > 50 && containerEl.clientHeight > 50) {
+        screenWidth = containerEl.clientWidth - 50;
+        screenHeight = containerEl.clientHeight - 50;
       } else {
-        // On mobile, canvas is fixed/floating, make it 90% of screen width
-        screenWidth = window.innerWidth * 0.9;
-        screenHeight = screenWidth * (1080 / 1920);
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          screenWidth = window.innerWidth - 50;
+          screenHeight = 500 - 50;
+        } else {
+          screenWidth = (window.innerWidth - 300) - 50;
+          screenHeight = window.innerHeight - 50;
+        }
       }
 
-      const ratio = Math.min(screenWidth / 1920, screenHeight / 1080);
+      const ratio = Math.max(0, Math.min(screenWidth / 1920, screenHeight / 1080));
   
       let resizedX = Math.floor(1920 * ratio);
       let resizedY = Math.floor(1080 * ratio);
