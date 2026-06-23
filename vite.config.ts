@@ -19,6 +19,11 @@ export default defineConfig(({ command, mode }) => {
                 },
             },
         },
+        css: {
+            postcss: {
+                plugins: []
+            }
+        },
         define: {
             __VERSION__: JSON.stringify(require('./package.json').version),
         },

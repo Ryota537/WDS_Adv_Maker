@@ -539,6 +539,22 @@ uploadCharInput?.addEventListener("change", async (e) => {
   }
 });
 
+// ==========================================
+// Screen Effects Integration
+// ==========================================
+const effectSepiaToggle = document.getElementById("effect-sepia-toggle") as HTMLInputElement;
+const effectWhiteBlurToggle = document.getElementById("effect-white-blur-toggle") as HTMLInputElement;
+
+effectSepiaToggle?.addEventListener("change", (e) => {
+  const isChecked = (e.target as HTMLInputElement).checked;
+  advplayer.setSandboxSepia(isChecked);
+});
+
+effectWhiteBlurToggle?.addEventListener("change", (e) => {
+  const isChecked = (e.target as HTMLInputElement).checked;
+  advplayer.setSandboxWhiteBlur(isChecked);
+});
+
 // Intercept AdvPlayer applySandboxState to update preview, text inputs, and character controllers appropriately
 const originalApplySandboxState = advplayer.applySandboxState.bind(advplayer);
 (advplayer as any).applySandboxState = async (state: any) => {
@@ -550,6 +566,12 @@ const originalApplySandboxState = advplayer.applySandboxState.bind(advplayer);
     if (state.dialogue) {
       if (speakerInput) speakerInput.value = state.dialogue.speakerName || "";
       if (dialogueInput) dialogueInput.value = state.dialogue.dialogueText || "";
+    }
+    if (effectSepiaToggle) {
+      effectSepiaToggle.checked = advplayer.getSandboxSepia();
+    }
+    if (effectWhiteBlurToggle) {
+      effectWhiteBlurToggle.checked = advplayer.getSandboxWhiteBlur();
     }
     renderCharacterControllers();
   }

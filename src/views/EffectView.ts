@@ -132,6 +132,27 @@ export class EffectView extends IView implements episodeExecutable{
         return this._nextShouldHide;
     }
 
+    public setSepia(visible: boolean) {
+        this._sepiaEffectObject.visible = visible;
+    }
+
+    public setWhiteBlur(visible: boolean) {
+        this._whiteBlurEffectObject.visible = visible;
+        if (visible) {
+            this._whiteBlurEffectAnimation.start();
+        } else {
+            this._whiteBlurEffectAnimation.stop();
+        }
+    }
+
+    public getSepia(): boolean {
+        return this._sepiaEffectObject.visible;
+    }
+
+    public getWhiteBlur(): boolean {
+        return this._whiteBlurEffectObject.visible;
+    }
+
 }
 
 

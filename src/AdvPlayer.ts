@@ -555,11 +555,31 @@ export class AdvPlayer extends Container<any> {
     this._textView.setSandboxText(speakerName, dialogueText);
   }
 
+  public setSandboxSepia(visible: boolean) {
+    this._effectView.setSepia(visible);
+  }
+
+  public setSandboxWhiteBlur(visible: boolean) {
+    this._effectView.setWhiteBlur(visible);
+  }
+
+  public getSandboxSepia(): boolean {
+    return this._effectView.getSepia();
+  }
+
+  public getSandboxWhiteBlur(): boolean {
+    return this._effectView.getWhiteBlur();
+  }
+
   public getSandboxState() {
     return {
       backgroundId: this._backgroundView.currentBGId,
       dialogue: this._textView.sandboxText,
-      characters: this._characterView.getSandboxCharactersState()
+      characters: this._characterView.getSandboxCharactersState(),
+      effects: {
+        sepia: this.getSandboxSepia(),
+        whiteBlur: this.getSandboxWhiteBlur()
+      }
     };
   }
 
@@ -574,6 +594,15 @@ export class AdvPlayer extends Container<any> {
     // Restore Text/Dialogue
     if (state.dialogue) {
       this.setSandboxText(state.dialogue.speakerName || '', state.dialogue.dialogueText || '');
+    }
+
+    // Restore Effects
+    if (state.effects) {
+      this.setSandboxSepia(!!state.effects.sepia);
+      this.setSandboxWhiteBlur(!!state.effects.whiteBlur);
+    } else {
+      this.setSandboxSepia(false);
+      this.setSandboxWhiteBlur(false);
     }
 
     // Restore Characters

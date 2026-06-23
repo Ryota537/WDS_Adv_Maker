@@ -8,23 +8,23 @@
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <title>Yume Stories | World Dai Star Story Maker</title>
-  <meta name="description" content="a ADV player for render the World Dai Star(世界大明星) in-game story.">
+  <meta name="description" content="a ADV maker for render the World Dai Star(世界大明星) custom story.">
   <meta name="keywords" itemprop="keywords"
-    content="World Dai Star, ワールドダイスター, WDS, ユメステ, ゆめのステラリウム, 夢のステラリウム, Yume no Stellarium, Adv Player, ストーリー, Stories">
+    content="World Dai Star, ワールドダイスター, WDS, ユメステ, ゆめのステラリウム, 夢のステラリウム, Yume no Stellarium, Adv Maker, ストーリー, Stories">
 
   <!-- Facebook Meta Tags -->
-  <meta property="og:url" content="https://cpk0521.github.io/WDS_Adv_Player/">
+  <meta property="og:url" content="https://yume-stories.pages.dev/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WDS Adv Player | World dai star">
-  <meta property="og:description" content="a ADV player for render the World Dai Star(世界大明星) in-game story.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/Cpk0521/WDS_Adv_Player/main/assets/cover.png">
+  <meta property="og:title" content="WDS Adv Maker | World Dai Star Story Maker">
+  <meta property="og:description" content="a ADV Maker for render the World Dai Star(世界大明星) custom story.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/Ryota537/WDS_Adv_Maker/main/assets/cover.png">
 
   <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://cpk0521.github.io/WDS_Adv_Player/">
-  <meta name="twitter:title" content="WDS Adv Player | World dai star">
-  <meta name="twitter:description" content="a ADV player for render the World Dai Star(世界大明星) in-game story.">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/Cpk0521/WDS_Adv_Player/main/assets/cover.png">
+  <meta property="twitter:url" content="https://yume-stories.pages.dev/">
+  <meta name="twitter:title" content="WDS Adv Maker | World Dai Star Story Maker">
+  <meta name="twitter:description" content="a ADV Maker for render the World Dai Star(世界大明星) in-game story.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/Ryota537/WDS_Adv_Maker/main/assets/cover.png">
   <link rel="stylesheet" href="/src/index.css" />
 </head>
 
@@ -44,15 +44,23 @@
       <!-- Action Top Bar -->
       <div class="action-top-bar">
         <button id="btn-capture-image" class="action-btn" title="Capture Image (.png)">
-          <svg class="action-icon" viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2m8 3a5 5 0 0 0-5 5 5 5 0 0 0 5 5 5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 2a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3z"/></svg>
+          <svg class="action-icon" viewBox="0 0 24 24">
+            <path
+              d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2m8 3a5 5 0 0 0-5 5 5 5 0 0 0 5 5 5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 2a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3z" />
+          </svg>
           Capture
         </button>
         <button id="btn-save-project" class="action-btn" title="Save Project (.json)">
-          <svg class="action-icon" viewBox="0 0 24 24"><path d="M15 9H5V5h10m-3 14a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3m5-16H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4z"/></svg>
+          <svg class="action-icon" viewBox="0 0 24 24">
+            <path
+              d="M15 9H5V5h10m-3 14a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3m5-16H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4z" />
+          </svg>
           Save
         </button>
         <label id="btn-load-project-label" class="action-btn" title="Load Project (.json)">
-          <svg class="action-icon" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6m-4 2h16v2H5v-2z"/></svg>
+          <svg class="action-icon" viewBox="0 0 24 24">
+            <path d="M9 16h6v-6h4l-7-7-7 7h4v6m-4 2h16v2H5v-2z" />
+          </svg>
           Load
           <input type="file" id="btn-load-project" accept=".json" style="display: none;" />
         </label>
@@ -77,21 +85,29 @@
         </div>
         <div id="tab-character" class="tab-pane">
           <div class="character-actions" style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Add New Character</label>
+            <label
+              style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Add
+              New Character</label>
             <div class="add-char-row" style="display: flex; gap: 8px; align-items: center;">
-              <select id="add-character-select" style="flex: 1; padding: 10px; background: #ffffff; border: 1px solid rgba(0,0,0,0.15); border-radius: 8px; color: #1e1923; font-family: inherit; font-size: 14px; outline: none;">
+              <select id="add-character-select"
+                style="flex: 1; padding: 10px; background: #ffffff; border: 1px solid rgba(0,0,0,0.15); border-radius: 8px; color: #1e1923; font-family: inherit; font-size: 14px; outline: none;">
                 <option value="" disabled selected>Loading characters...</option>
               </select>
-              <button id="add-character-btn" class="btn btn-primary" style="width: auto; padding: 10px 16px;">Add</button>
+              <button id="add-character-btn" class="btn btn-primary"
+                style="width: auto; padding: 10px 16px;">Add</button>
             </div>
             <div class="upload-char-row" style="display: flex; gap: 8px; align-items: center; margin-top: 12px;">
-              <label class="btn btn-secondary" style="margin: 0; display: flex; align-items: center; justify-content: center; flex: 1; font-size: 12px; padding: 10px; cursor: pointer;">
+              <label class="btn btn-secondary"
+                style="margin: 0; display: flex; align-items: center; justify-content: center; flex: 1; font-size: 12px; padding: 10px; cursor: pointer;">
                 Upload Custom Char
                 <input type="file" id="upload-char-input" accept="image/*" style="display: none;" />
               </label>
             </div>
-            <div class="custom-characters-section" style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 15px;">
-              <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Custom Characters</label>
+            <div class="custom-characters-section"
+              style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 15px;">
+              <label
+                style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Custom
+                Characters</label>
               <div id="custom-chars-container" style="display: flex; flex-direction: column; gap: 8px;">
                 <!-- Custom characters list rendered here -->
               </div>
@@ -108,10 +124,27 @@
           </div>
           <div class="bg-actions">
             <button id="select-bg-btn" class="btn btn-primary">Select Background</button>
-            <label class="btn btn-secondary" style="margin: 0; display: flex; align-items: center; justify-content: center;">
+            <label class="btn btn-secondary"
+              style="margin: 0; display: flex; align-items: center; justify-content: center;">
               Upload Custom BG
               <input type="file" id="upload-bg-input" accept="image/*" style="display: none;" />
             </label>
+          </div>
+          <div class="effects-section"
+            style="margin-top: 24px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 16px;">
+            <label
+              style="display: block; margin-bottom: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Screen
+              Effects</label>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <label class="switch-container" style="justify-content: space-between; width: 100%;">
+                <span style="color: #1e1923; font-weight: 500;">Sepia Overlay</span>
+                <input type="checkbox" id="effect-sepia-toggle" />
+              </label>
+              <label class="switch-container" style="justify-content: space-between; width: 100%;">
+                <span style="color: #1e1923; font-weight: 500;">White Blur Edge</span>
+                <input type="checkbox" id="effect-white-blur-toggle" />
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -141,10 +174,13 @@
         <button class="close-modal" id="close-preview-modal-btn">&times;</button>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
-        <pre id="json-preview-area" style="background: #f8fafc; border: 1px solid rgba(0, 0, 0, 0.08); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 350px; overflow-y: auto; color: #FF7073; white-space: pre-wrap; word-break: break-all;"></pre>
+        <pre id="json-preview-area"
+          style="background: #f8fafc; border: 1px solid rgba(0, 0, 0, 0.08); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 350px; overflow-y: auto; color: #FF7073; white-space: pre-wrap; word-break: break-all;"></pre>
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
-          <button id="btn-cancel-preview" class="btn btn-secondary" style="width: auto; padding: 8px 16px;">Cancel</button>
-          <button id="btn-confirm-save" class="btn btn-primary" style="width: auto; padding: 8px 24px;">Confirm & Save</button>
+          <button id="btn-cancel-preview" class="btn btn-secondary"
+            style="width: auto; padding: 8px 16px;">Cancel</button>
+          <button id="btn-confirm-save" class="btn btn-primary" style="width: auto; padding: 8px 24px;">Confirm &
+            Save</button>
         </div>
       </div>
     </div>
