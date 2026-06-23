@@ -250,6 +250,10 @@ export class BackgroundView extends IView implements episodeExecutable{
   public async setSandboxBackground(bgId: string) {
     const bgKey = `bg_${bgId}`;
     if (!Assets.cache.has(bgKey)) {
+      if (bgId.startsWith("custom_")) {
+        console.warn(`Custom background ${bgId} was not found in the Assets cache. Ensure it has been uploaded.`);
+        return;
+      }
       const bgUrl = resPath.background(bgId);
       Assets.add({ alias: bgKey, src: bgUrl });
       try {

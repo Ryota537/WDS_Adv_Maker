@@ -2,7 +2,7 @@ import { Container, Assets } from "pixi.js";
 import { resPath } from "../utils/resPath";
 import { episodeExecutable, IView } from "../types/View";
 import { IEpisodeBackground, IEpisodeCharacter, IEpisodeUnitCharacterMotion } from "../types/Episode";
-import { characterAnimation, AdventureAnimationStandCharacter } from '../object/characterSpineModel'
+import { characterAnimation, AdventureAnimationStandCharacter, CustomStaticCharacter } from '../object/characterSpineModel'
 // constant
 import LipSynParameters from "../constant/LipSync";
 import BodyMotion from "../constant/BodyMotion";
@@ -13,7 +13,7 @@ import HeadMotion from "../constant/HeadMotion";
 interface motionCharacterRecord {
     slotNumber : number;
     spineId : number;
-    character : AdventureAnimationStandCharacter | undefined;
+    character : AdventureAnimationStandCharacter | CustomStaticCharacter | undefined;
 }
 
 export class CharacterView extends IView implements episodeExecutable{
@@ -25,7 +25,7 @@ export class CharacterView extends IView implements episodeExecutable{
     protected readonly _headMotions =  HeadMotion;
     protected readonly _headDirections = HeadDirection;
 
-    protected readonly _standCharacters : Map<string, AdventureAnimationStandCharacter> = new Map(); //all
+    protected readonly _standCharacters : Map<string, AdventureAnimationStandCharacter | CustomStaticCharacter> = new Map(); //all
     protected _motionCharacters : motionCharacterRecord[] = []; //show on screen
     protected _prevCharacters : motionCharacterRecord[] = [];
     
@@ -159,7 +159,7 @@ export class CharacterView extends IView implements episodeExecutable{
     }
 
     destroySpine() : void{
-        Object.values(this._standCharacters).forEach((char : AdventureAnimationStandCharacter) => char.destory())
+        this._standCharacters.forEach((char) => char.destory());
         this._standCharacters.clear();
     }
 
@@ -175,77 +175,103 @@ export class CharacterView extends IView implements episodeExecutable{
         headDirection: string,
         position: {x: number, y: number, scale: number}
     ) {
-        const spineId = parseInt(charId + costumeId, 10);
-        
-        // Ensure assets are loaded
-        const skelKey = `spine_${spineId}`;
-        const atlasKey = `spine_atlas_${spineId}`;
-        if (!Assets.cache.has(skelKey) || !Assets.cache.has(atlasKey)) {
-            const skelUrl = resPath.spine(spineId);
-            const atlasUrl = resPath.spine_atlas(spineId);
-            if (!Assets.cache.has(skelKey)) {
-                Assets.add({ alias: skelKey, src: skelUrl });
-            }
-            if (!Assets.cache.has(atlasKey)) {
-                Assets.add({ alias: atlasKey, src: atlasUrl });
-            }
-            await Assets.load([skelKey, atlasKey]);
-        }
-
-        // Upsert Logic: Check if character with this charId is already on stage
+        const isCustomImage = charId.startsWith("custom_");
         let record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
 
-        if (record) {
-            // Check if costume (and thus spineId) has changed
-            if (record.spineId !== spineId) {
-                // Destroy old model
-                const oldChar = record.character;
-                if (oldChar) {
-                    this.removeChild(oldChar.model);
-                    oldChar.destory();
+        if (isCustomImage) {
+            const textureKey = `char_image_${charId}`;
+            if (!Assets.cache.has(textureKey)) {
+                console.warn(`Custom character texture for key ${textureKey} not found in Assets cache.`);
+                return;
+            }
+
+            if (!record) {
+                const newModel = new CustomStaticCharacter(charId, textureKey);
+                newModel.addTo(this);
+                this._standCharacters.set(charId, newModel);
+
+                const slotNumber = this._motionCharacters.length + 1;
+                newModel.changeSlotNumber(slotNumber);
+
+                record = {
+                    slotNumber: slotNumber,
+                    spineId: 0,
+                    character: newModel
+                };
+                this._motionCharacters.push(record);
+            }
+        } else {
+            const spineId = parseInt(charId + costumeId, 10);
+            
+            // Ensure assets are loaded
+            const skelKey = `spine_${spineId}`;
+            const atlasKey = `spine_atlas_${spineId}`;
+            if (!Assets.cache.has(skelKey) || !Assets.cache.has(atlasKey)) {
+                const skelUrl = resPath.spine(spineId);
+                const atlasUrl = resPath.spine_atlas(spineId);
+                if (!Assets.cache.has(skelKey)) {
+                    Assets.add({ alias: skelKey, src: skelUrl });
                 }
-                
-                // Create new model
+                if (!Assets.cache.has(atlasKey)) {
+                    Assets.add({ alias: atlasKey, src: atlasUrl });
+                }
+                await Assets.load([skelKey, atlasKey]);
+            }
+
+            if (record) {
+                // Check if costume (and thus spineId) has changed
+                if (record.spineId !== spineId) {
+                    // Destroy old model
+                    const oldChar = record.character;
+                    if (oldChar) {
+                        this.removeChild(oldChar.model);
+                        oldChar.destory();
+                    }
+                    
+                    // Create new model
+                    const newModel = new AdventureAnimationStandCharacter(spineId);
+                    newModel.addTo(this);
+                    this._standCharacters.set(`${spineId}`, newModel);
+                    
+                    record.spineId = spineId;
+                    record.character = newModel;
+                }
+            } else {
+                // Character doesn't exist, create it
                 const newModel = new AdventureAnimationStandCharacter(spineId);
                 newModel.addTo(this);
                 this._standCharacters.set(`${spineId}`, newModel);
                 
-                record.spineId = spineId;
-                record.character = newModel;
+                // Assign next available slot number
+                const slotNumber = this._motionCharacters.length + 1;
+                newModel.changeSlotNumber(slotNumber);
+                
+                record = {
+                    slotNumber: slotNumber,
+                    spineId: spineId,
+                    character: newModel
+                };
+                this._motionCharacters.push(record);
             }
-        } else {
-            // Character doesn't exist, create it
-            const newModel = new AdventureAnimationStandCharacter(spineId);
-            newModel.addTo(this);
-            this._standCharacters.set(`${spineId}`, newModel);
-            
-            // Assign next available slot number
-            const slotNumber = this._motionCharacters.length + 1;
-            newModel.changeSlotNumber(slotNumber);
-            
-            record = {
-                slotNumber: slotNumber,
-                spineId: spineId,
-                character: newModel
-            };
-            this._motionCharacters.push(record);
         }
 
         // Apply visual updates
-        const model = record.character;
+        const model = record?.character;
         if (model) {
             model.showCharacter(true);
             model.setPositionCoords(position.x, position.y);
             model.setScale(position.scale);
             
-            if (motion) {
-                model.setBodyMotion(motion);
-            }
-            if (facial) {
-                model.setFacialExpression(facial);
-            }
-            if (headDirection) {
-                model.setHeadDirection(headDirection);
+            if (!isCustomImage) {
+                if (motion) {
+                    model.setBodyMotion(motion);
+                }
+                if (facial) {
+                    model.setFacialExpression(facial);
+                }
+                if (headDirection) {
+                    model.setHeadDirection(headDirection);
+                }
             }
         }
     }
@@ -257,7 +283,8 @@ export class CharacterView extends IView implements episodeExecutable{
             if (record.character) {
                 this.removeChild(record.character.model);
                 record.character.destory();
-                this._standCharacters.delete(`${record.spineId}`);
+                const key = charId.startsWith("custom_") ? charId : `${record.spineId}`;
+                this._standCharacters.delete(key);
             }
             this._motionCharacters.splice(index, 1);
         }

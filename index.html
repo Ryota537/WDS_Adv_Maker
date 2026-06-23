@@ -84,6 +84,18 @@
               </select>
               <button id="add-character-btn" class="btn btn-primary" style="width: auto; padding: 10px 16px;">Add</button>
             </div>
+            <div class="upload-char-row" style="display: flex; gap: 8px; align-items: center; margin-top: 12px;">
+              <label class="btn btn-secondary" style="margin: 0; display: flex; align-items: center; justify-content: center; flex: 1; font-size: 12px; padding: 10px; cursor: pointer;">
+                Upload Custom Char
+                <input type="file" id="upload-char-input" accept="image/*" style="display: none;" />
+              </label>
+            </div>
+            <div class="custom-characters-section" style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 15px;">
+              <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #FF7073;">Custom Characters</label>
+              <div id="custom-chars-container" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Custom characters list rendered here -->
+              </div>
+            </div>
           </div>
           <div id="character-controllers-container" class="character-controllers-list">
             <!-- Dynamic character controllers will be injected here -->

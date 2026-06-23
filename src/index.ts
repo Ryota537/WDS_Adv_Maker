@@ -2,8 +2,9 @@ import { getUrlParams } from "./utils/UrlParams";
 import { AdvPlayer } from "./AdvPlayer";
 import { createApp } from "./utils/createApp";
 import { resPath } from "./utils/resPath";
-import { Assets } from "pixi.js";
+import { Assets, Cache, Texture } from "pixi.js";
 import { saveCustomBackground, getCustomBackgrounds, deleteCustomBackground } from "./utils/customBgStorage";
+import { saveCustomCharacter, getCustomCharacters, deleteCustomCharacter } from "./utils/customCharStorage";
 import { CHARACTER_MAP, THEATER_ORDER } from "./constant/charList";
 import BodyMotion from "./constant/BodyMotion";
 import FacialExpression from "./constant/FacialExpression";
@@ -194,6 +195,137 @@ const canvasBgBlur = document.getElementById("canvas-bg-blur");
 const customBackgroundsMap = new Map<string, string>();
 let standardBgList: string[] = [];
 
+// Map to track local object URLs and names for custom characters
+const customCharactersMap = new Map<string, { name: string; blobUrl: string }>();
+const uploadCharInput = document.getElementById("upload-char-input") as HTMLInputElement;
+const customCharsContainer = document.getElementById("custom-chars-container");
+
+const renderCustomCharactersList = () => {
+  if (!customCharsContainer) return;
+  customCharsContainer.innerHTML = "";
+
+  if (customCharactersMap.size === 0) {
+    customCharsContainer.innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 11px; text-align: center; margin: 8px 0;">No custom characters uploaded.</p>';
+    return;
+  }
+
+  const activeChars = advplayer.getSandboxState().characters;
+
+  customCharactersMap.forEach((info, charId) => {
+    const item = document.createElement("div");
+    item.className = "custom-char-item";
+    item.style.display = "flex";
+    item.style.alignItems = "center";
+    item.style.justifyContent = "space-between";
+    item.style.background = "#ffffff";
+    item.style.padding = "8px 12px";
+    item.style.border = "1px solid rgba(0,0,0,0.08)";
+    item.style.borderRadius = "8px";
+    item.style.gap = "8px";
+
+    const labelContainer = document.createElement("div");
+    labelContainer.style.display = "flex";
+    labelContainer.style.alignItems = "center";
+    labelContainer.style.gap = "8px";
+    labelContainer.style.overflow = "hidden";
+    labelContainer.style.flex = "1";
+
+    const thumb = document.createElement("div");
+    thumb.style.width = "32px";
+    thumb.style.height = "32px";
+    thumb.style.borderRadius = "4px";
+    thumb.style.backgroundSize = "cover";
+    thumb.style.backgroundPosition = "center";
+    thumb.style.backgroundImage = `url('${info.blobUrl}')`;
+
+    const nameText = document.createElement("span");
+    nameText.style.fontSize = "12px";
+    nameText.style.fontWeight = "600";
+    nameText.style.color = "#1e1923";
+    nameText.style.overflow = "hidden";
+    nameText.style.textOverflow = "ellipsis";
+    nameText.style.whiteSpace = "nowrap";
+    nameText.textContent = info.name;
+
+    labelContainer.appendChild(thumb);
+    labelContainer.appendChild(nameText);
+
+    const btnContainer = document.createElement("div");
+    btnContainer.style.display = "flex";
+    btnContainer.style.gap = "4px";
+
+    const addBtn = document.createElement("button");
+    addBtn.className = "btn btn-primary";
+    addBtn.style.width = "auto";
+    addBtn.style.padding = "6px 10px";
+    addBtn.style.fontSize = "11px";
+    addBtn.textContent = "Add";
+
+    // Check if already active
+    const isActive = activeChars.some(c => c.charId === charId);
+    if (isActive) {
+      addBtn.disabled = true;
+      addBtn.style.opacity = "0.5";
+    }
+
+    addBtn.addEventListener("click", async () => {
+      // Add custom character to stage
+      await advplayer.updateSandboxCharacter(charId, "", "", "", "", { x: 960, y: 540, scale: 0.5 });
+      renderCharacterControllers();
+      renderCustomCharactersList();
+    });
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "btn btn-danger";
+    deleteBtn.style.width = "auto";
+    deleteBtn.style.padding = "6px 10px";
+    deleteBtn.style.fontSize = "11px";
+    deleteBtn.innerHTML = "&times;";
+    deleteBtn.title = "Delete custom character";
+    deleteBtn.addEventListener("click", async () => {
+      if (confirm(`Delete custom character ${info.name}?`)) {
+        // If it was active on stage, remove it first
+        if (activeChars.some(c => c.charId === charId)) {
+          advplayer.removeSandboxCharacter(charId);
+          renderCharacterControllers();
+        }
+        
+        // Remove from IndexedDB
+        await deleteCustomCharacter(charId);
+        
+        // Revoke URL and delete from map
+        URL.revokeObjectURL(info.blobUrl);
+        customCharactersMap.delete(charId);
+        
+        // Clean from Cache
+        Cache.remove(`char_image_${charId}`);
+
+        renderCustomCharactersList();
+      }
+    });
+
+    btnContainer.appendChild(addBtn);
+    btnContainer.appendChild(deleteBtn);
+
+    item.appendChild(labelContainer);
+    item.appendChild(btnContainer);
+
+    customCharsContainer.appendChild(item);
+  });
+};
+
+// Helper to load a blob URL as a texture and cache it in PixiJS manually
+const loadBlobAsTexture = async (blobUrl: string, bgKey: string) => {
+  const img = new Image();
+  img.src = blobUrl;
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(`Failed to load image from blob URL: ${blobUrl}`));
+  });
+  const texture = Texture.from(img);
+  Cache.set(bgKey, texture);
+};
+
 const updateActiveBgPreview = (bgId: string) => {
   if (activeBgId) {
     activeBgId.textContent = bgId.startsWith("custom_") ? "Uploaded Custom Image" : `Background: ${bgId}`;
@@ -361,9 +493,8 @@ uploadBgInput?.addEventListener("change", async (e) => {
     const blobUrl = URL.createObjectURL(file);
     customBackgroundsMap.set(customBgId, blobUrl);
 
-    // Register blob texture in PixiJS cache
-    Assets.add({ alias: bgKey, src: blobUrl });
-    await Assets.load(bgKey);
+    // Register blob texture in PixiJS cache using HTMLImageElement helper
+    await loadBlobAsTexture(blobUrl, bgKey);
 
     // Set as player background
     await advplayer.setSandboxBackground(customBgId);
@@ -372,6 +503,39 @@ uploadBgInput?.addEventListener("change", async (e) => {
     updateActiveBgPreview(customBgId);
   } catch (error) {
     console.error("Failed to upload/save custom background:", error);
+  }
+});
+
+// Handle custom character upload
+uploadCharInput?.addEventListener("change", async (e) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+
+  const customCharId = `custom_${Date.now()}`;
+  const textureKey = `char_image_${customCharId}`;
+
+  try {
+    // Save to IndexedDB
+    await saveCustomCharacter(customCharId, file, file.name);
+
+    // Create object URL and store in mapping
+    const blobUrl = URL.createObjectURL(file);
+    customCharactersMap.set(customCharId, { name: file.name, blobUrl });
+
+    // Register blob texture in PixiJS cache using HTMLImageElement helper
+    await loadBlobAsTexture(blobUrl, textureKey);
+
+    // Automatically add to stage
+    await advplayer.updateSandboxCharacter(customCharId, "", "", "", "", { x: 960, y: 540, scale: 0.5 });
+
+    // Render UIs
+    renderCharacterControllers();
+    renderCustomCharactersList();
+
+    // Reset input value
+    uploadCharInput.value = "";
+  } catch (error) {
+    console.error("Failed to upload/save custom character:", error);
   }
 });
 
@@ -466,9 +630,8 @@ const initBackgroundTab = async () => {
       customBackgroundsMap.set(item.id, blobUrl);
       
       const bgKey = `bg_${item.id}`;
-      Assets.add({ alias: bgKey, src: blobUrl });
-      // Pre-load texture
-      await Assets.load(bgKey);
+      // Pre-load texture using HTMLImageElement helper
+      await loadBlobAsTexture(blobUrl, bgKey);
     }
 
     // 2. Fetch standard background list
@@ -519,13 +682,16 @@ const renderCharacterControllers = () => {
     const card = document.createElement("div");
     card.className = "char-card";
 
+    const isCustomImage = charId.startsWith("custom_");
+
     // Header
     const header = document.createElement("div");
     header.className = "char-card-header";
     
     const title = document.createElement("div");
     title.className = "char-card-title";
-    title.textContent = `${charInfo.name} (${charId})`;
+    const displayName = isCustomImage ? (customCharactersMap.get(charId)?.name || "Custom Character") : charInfo.name;
+    title.textContent = `${displayName} (${charId})`;
     header.appendChild(title);
 
     const toggleIndicator = document.createElement("span");
@@ -544,6 +710,75 @@ const renderCharacterControllers = () => {
       body.style.display = isHidden ? "flex" : "none";
       toggleIndicator.textContent = isHidden ? "▼" : "▲";
     });
+
+    if (isCustomImage) {
+      const createSlider = (label: string, min: number, max: number, step: number, val: number, onChange: (v: number) => void) => {
+        const group = document.createElement("div");
+        group.className = "slider-group";
+
+        const labelRow = document.createElement("div");
+        labelRow.className = "slider-label-row";
+        labelRow.innerHTML = `<span>${label}</span><span class="slider-value">${val}</span>`;
+
+        const slider = document.createElement("input");
+        slider.type = "range";
+        slider.className = "char-slider";
+        slider.min = min.toString();
+        slider.max = max.toString();
+        slider.step = step.toString();
+        slider.value = val.toString();
+
+        const valEl = labelRow.querySelector(".slider-value") as HTMLElement;
+
+        slider.addEventListener("input", (e) => {
+          const v = parseFloat((e.target as HTMLInputElement).value);
+          valEl.textContent = v.toString();
+          onChange(v);
+        });
+
+        group.appendChild(labelRow);
+        group.appendChild(slider);
+        return group;
+      };
+
+      const xSliderGroup = createSlider("Position X", 0, 1920, 1, char.position.x, async (xVal) => {
+        char.position.x = xVal;
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position);
+      });
+
+      const ySliderGroup = createSlider("Position Y", 0, 1080, 1, char.position.y, async (yVal) => {
+        char.position.y = yVal;
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position);
+      });
+
+      const scaleSliderGroup = createSlider("Scale", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
+        char.position.scale = scaleVal;
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position);
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn btn-danger";
+      deleteBtn.style.marginTop = "12px";
+      deleteBtn.textContent = "Delete Character";
+      deleteBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (confirm(`Remove custom character from stage?`)) {
+          advplayer.removeSandboxCharacter(charId);
+          renderCharacterControllers();
+          renderCustomCharactersList();
+        }
+      });
+
+      body.appendChild(xSliderGroup);
+      body.appendChild(ySliderGroup);
+      body.appendChild(scaleSliderGroup);
+      body.appendChild(deleteBtn);
+
+      card.appendChild(header);
+      card.appendChild(body);
+      characterControllersContainer.appendChild(card);
+      return;
+    }
 
     // Sub-Tabs Header
     const tabsHeader = document.createElement("div");
@@ -1032,6 +1267,20 @@ const initCharacterTab = async () => {
         addCharacterSelect.appendChild(optgroup);
       });
     }
+
+    // 4. Load custom characters from IndexedDB
+    const savedChars = await getCustomCharacters();
+    for (const item of savedChars) {
+      const blobUrl = URL.createObjectURL(item.blob);
+      customCharactersMap.set(item.id, { name: item.name, blobUrl });
+      
+      // Register texture in Cache using HTMLImageElement helper
+      const textureKey = `char_image_${item.id}`;
+      await loadBlobAsTexture(blobUrl, textureKey);
+    }
+    
+    // 5. Render custom characters list
+    renderCustomCharactersList();
   } catch (error) {
     console.error("Failed to load Spine manifest:", error);
     if (addCharacterSelect) {

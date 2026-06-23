@@ -1,4 +1,4 @@
-import { Container } from "pixi.js";
+import { Container, Sprite, Assets } from "pixi.js";
 import { Spine } from '@esotericsoftware/spine-pixi-v8';
 import { CharacterAppearanceTypes, CharacterPositions } from "../types/Episode";
 import LoopMotion from "../constant/LoopMotion";
@@ -448,3 +448,123 @@ export class AdventureAnimationStandCharacter {
         this.activeGesture.R = "";
     }
 }
+
+export class CustomStaticCharacter {
+    protected _model : Sprite;
+    protected _charId : string;
+    protected _slotNumber : number = 0;
+    
+    constructor(charId: string, textureKey: string) {
+        this._charId = charId;
+        const texture = Assets.get(textureKey);
+        this._model = new Sprite(texture);
+        this._model.anchor.set(0.5, 0.5);
+        this._model.label = this._charId;
+        this._model.x = 1920 / 2;
+        this._model.y = 1080 / 2;
+        this._model.scale.set(0.5);
+    }
+
+    addTo<T extends Container>(parent : T, order: number = 0){
+        parent.addChild(this._model);
+        this._model.zIndex = order;
+    }
+
+    changeSlotNumber(slotNumber : number){
+        this._slotNumber = slotNumber;
+    }
+
+    changePosition(position: any) {
+        // no-op
+    }
+
+    setScale(size : number = 0.5){
+        this._model.scale.set(size);
+    }
+
+    setPositionCoords(x: number, y: number) {
+        this._model.x = x;
+        this._model.y = y;
+    }
+
+    showCharacter(visible : boolean = true){
+        this._model.visible = visible;
+    }
+
+    destory(){
+        this._model.destroy();
+    }
+
+    get slotNumber(){
+        return this._slotNumber;
+    }
+
+    get spineId(){
+        return 0;
+    }
+
+    set visible(bool : boolean){
+        this._model.visible = bool;
+    }
+
+    get visible(){
+        return this._model.visible;
+    }
+
+    get charId(){
+        return this._charId;
+    }
+
+    get model() {
+        return this._model;
+    }
+
+    get costumeId(): string {
+        return "";
+    }
+
+    get currentMotion(): string {
+        return "";
+    }
+
+    get currentFacial(): number {
+        return 0;
+    }
+
+    get currentHeadDirection(): string {
+        return "";
+    }
+
+    get sandboxState() {
+        return {
+            charId: this.charId,
+            costumeId: this.costumeId,
+            motion: this.currentMotion,
+            facial: String(this.currentFacial),
+            headDirection: this.currentHeadDirection,
+            position: {
+                x: this._model.x,
+                y: this._model.y,
+                scale: this._model.scale.x
+            },
+            isCustomImage: true
+        };
+    }
+
+    offLipSync() {}
+    onLipSync() {}
+    hideCharacter() {
+        this._model.visible = false;
+    }
+    setBodyMotion(motion: any) {}
+    setFacialExpression(facial: any) {}
+    setHeadDirection(dir: any) {}
+    getBones() { return []; }
+    setBoneTransform() {}
+    getAnimations() { return []; }
+    scrubAnimation() {}
+    resetToSetupPose() {}
+    setHandGesture() {}
+    resetHandGestures() {}
+}
+
