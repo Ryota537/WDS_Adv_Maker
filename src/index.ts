@@ -630,6 +630,28 @@ btnConfirmSave?.addEventListener("click", () => {
   closePreviewModal();
 });
 
+// About Modal
+const btnAbout = document.getElementById("btn-about");
+const aboutModal = document.getElementById("about-modal");
+const closeAboutModalBtn = document.getElementById("close-about-modal-btn");
+const confirmCloseAboutBtn = document.getElementById("confirm-close-about-btn");
+
+const closeAboutModal = () => {
+  aboutModal?.classList.remove("open");
+};
+
+btnAbout?.addEventListener("click", () => {
+  aboutModal?.classList.add("open");
+});
+
+closeAboutModalBtn?.addEventListener("click", closeAboutModal);
+confirmCloseAboutBtn?.addEventListener("click", closeAboutModal);
+aboutModal?.addEventListener("click", (e) => {
+  if (e.target === aboutModal) {
+    closeAboutModal();
+  }
+});
+
 // Load Project Button -> handle input change
 const btnLoadProject = document.getElementById("btn-load-project") as HTMLInputElement;
 btnLoadProject?.addEventListener("change", async (e) => {

@@ -32,14 +32,11 @@
   <div id="app-layout">
     <div id="canvas-container">
       <div id="canvas-bg-blur"></div>
+      <button id="btn-about" title="About Yume Stories"></button>
     </div>
     <aside id="editor-sidebar">
       <div class="sidebar-header">
         <h2>Yume Stories</h2>
-        <!-- <label class="switch-container">
-          <span>Sandbox Mode</span>
-          <input type="checkbox" id="sandbox-toggle" />
-        </label> -->
       </div>
       <!-- Action Top Bar -->
       <div class="action-top-bar">
@@ -182,6 +179,44 @@
           <button id="btn-confirm-save" class="btn btn-primary" style="width: auto; padding: 8px 24px;">Confirm &
             Save</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pop-up for About Yume Stories -->
+  <div id="about-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px; text-align: center;">
+      <div class="modal-header" style="justify-content: center; position: relative;">
+        <h3 style="color: #FF7073; font-size: 20px; width: 100%;">About Yume Stories</h3>
+        <button class="close-modal" id="close-about-modal-btn"
+          style="position: absolute; right: 16px; top: 12px;">&times;</button>
+      </div>
+      <div class="modal-body"
+        style="display: flex; flex-direction: column; gap: 16px; align-items: center; padding: 24px 32px;">
+        <img src="https://world-dai-star.com/MeNeEcJP/wp-content/themes/wds/assets/images/common/logo-glow.png"
+          alt="World Dai Star Logo"
+          style="width: 256px; height: auto; display: block; filter: drop-shadow(0 4px 12px rgba(255, 112, 115, 0.2));" />
+        <h4 style="font-size: 16px; font-weight: 700; color: #1e1923; margin: 8px 0 4px 0;">World Dai Star Scenario
+          Maker</h4>
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b; margin: 0;">
+          A fan-made interactive visual scene generator & dialogue editor for the mobile game <strong>World Dai Star:
+            Yume no Stellarium</strong>. Custom pose characters, set stage backgrounds, and write your own scripts!
+        </p>
+        <p style="font-size: 12px; color: #64748b; margin: 0;">
+          This project is open source and available on <a href="https://github.com/Ryota537/WDS_Adv_Maker"
+            target="_blank" style="color: #FF7073; text-decoration: none; font-weight: 600;">GitHub</a>. If you have
+          encountered any issues, please feel free to <a href="https://github.com/Ryota537/WDS_Adv_Maker/issues"
+            target="_blank" style="color: #FF7073; text-decoration: none; font-weight: 600;">open an issue</a>.
+        </p>
+        <div style="border-top: 1px solid rgba(0,0,0,0.08); width: 100%; margin: 12px 0;"></div>
+        <p style="font-size: 12px; color: #64748b; margin: 0;">
+          Special thanks to <a href="https://github.com/Cpk0521" target="_blank"
+            style="color: #FF7073; text-decoration: none; font-weight: 600;">Cpk0521</a> for the original <a
+            href="https://github.com/Cpk0521/WDS_Adv_Player" target="_blank"
+            style="color: #FF7073; text-decoration: none; font-weight: 600;">WDS_Adv_Player</a> base!
+        </p>
+        <button id="confirm-close-about-btn" class="btn btn-primary"
+          style="margin-top: 16px; width: 100%; max-width: 200px;">Close</button>
       </div>
     </div>
   </div>

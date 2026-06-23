@@ -788,3 +788,43 @@ body {
   33.3% { background-image: url('/img_story_scene_illust_jugon_2.png'); }
   66.6% { background-image: url('/img_story_scene_illust_jugon_3.png'); }
 }
+
+/* About Button */
+#btn-about {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 50px;
+  height: 50px;
+  background-image: url('/btn_story_scene_icon_bg_red.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+  filter: drop-shadow(0 4px 12px rgba(255, 112, 115, 0.4));
+}
+
+#btn-about:hover {
+  transform: scale(1.08);
+  filter: brightness(1.1) drop-shadow(0 6px 16px rgba(255, 112, 115, 0.5));
+}
+
+#btn-about:active {
+  transform: scale(0.96);
+}
+
+#btn-about::after {
+  content: '?';
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
