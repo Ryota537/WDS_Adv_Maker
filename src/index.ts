@@ -86,7 +86,17 @@ Assets.loadBundle = async (...args) => {
 const { renderer } = getUrlParams();
 
 // Initialize PixiJS application
-const app = await createApp(<'webgl' | 'webgpu'> renderer);
+let app;
+try {
+  app = await createApp(<'webgl' | 'webgpu'> renderer);
+} catch (err) {
+  console.error("[index] PixiJS initialization failed. Fallback message should be visible.", err);
+  // Hide loading indicator since we won't proceed
+  const loadingEl = document.getElementById('jugon-loading');
+  if (loadingEl) loadingEl.style.display = 'none';
+  // Stop execution — the fallback message was already shown by createApp
+  throw err;
+}
 
 // Create Adv Player
 const advplayer = await AdvPlayer.create(app.stage);
