@@ -4,6 +4,7 @@
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Ronowstd Gbs';
   src: url('/RoNOWStd-GBs.otf') format('opentype');
@@ -78,18 +79,28 @@ body {
 
 @media (width <=768px) {
   #canvas-container {
-    height: 500px;
+    height: 300px;
     flex: none;
   }
 }
 
 #WDS {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   border-radius: 8px;
   transition: all 0.3s ease;
   width: 90%;
   position: relative;
   z-index: 1;
+}
+
+@media (width <=768px) {
+  #WDS {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+  }
 }
 
 /* Renderer Fallback Message */
@@ -102,8 +113,13 @@ body {
 }
 
 @keyframes fallback-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 #renderer-fallback-msg .fallback-text {
@@ -820,9 +836,17 @@ body {
 }
 
 @keyframes jugon-play {
-  0% { background-image: url('/img_story_scene_illust_jugon_1.png'); }
-  33.3% { background-image: url('/img_story_scene_illust_jugon_2.png'); }
-  66.6% { background-image: url('/img_story_scene_illust_jugon_3.png'); }
+  0% {
+    background-image: url('/img_story_scene_illust_jugon_1.png');
+  }
+
+  33.3% {
+    background-image: url('/img_story_scene_illust_jugon_2.png');
+  }
+
+  66.6% {
+    background-image: url('/img_story_scene_illust_jugon_3.png');
+  }
 }
 
 /* About Button */
@@ -839,7 +863,7 @@ body {
   background-color: transparent;
   border: none;
   cursor: pointer;
-  z-index: 100;
+  z-index: 1500;
   display: flex;
   align-items: center;
   justify-content: center;
