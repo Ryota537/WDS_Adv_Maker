@@ -96,6 +96,10 @@ export class AdvPlayer extends Container<any> {
     this._textView.setSandboxText(speakerName, dialogueText);
   }
 
+  public setDialogueBoxVisible(visible: boolean) {
+    this._textView.setDialogueBoxVisible(visible);
+  }
+
   public setSandboxSepia(visible: boolean) {
     this._effectView.setSepia(visible);
   }
@@ -115,7 +119,10 @@ export class AdvPlayer extends Container<any> {
   public getSandboxState() {
     return {
       backgroundId: this._backgroundView.currentBGId,
-      dialogue: this._textView.sandboxText,
+      dialogue: {
+        ...this._textView.sandboxText,
+        visible: this._textView.getDialogueBoxVisible()
+      },
       characters: this._characterView.getSandboxCharactersState(),
       effects: {
         sepia: this.getSandboxSepia(),
@@ -134,6 +141,7 @@ export class AdvPlayer extends Container<any> {
 
     // Restore Text/Dialogue
     if (state.dialogue) {
+      this.setDialogueBoxVisible(state.dialogue.visible !== false);
       this.setSandboxText(state.dialogue.speakerName || '', state.dialogue.dialogueText || '');
     }
 

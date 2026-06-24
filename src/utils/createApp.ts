@@ -195,6 +195,12 @@ export function showRendererFallbackMessage() {
     const container = document.getElementById("canvas-container");
     if (!container) return;
 
+    // Hide the canvas so it doesn't block the fallback message clicks
+    const canvas = document.getElementById("WDS");
+    if (canvas) {
+      canvas.style.display = "none";
+    }
+
     const msg = document.createElement("div");
     msg.id = "renderer-fallback-msg";
     msg.innerHTML = `

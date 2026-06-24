@@ -19,6 +19,7 @@ export class TextView extends IView implements episodeExecutable{
     protected _isTranslate : boolean = false;
     protected _fontFamilies : string[] = ['Ronowstd Gbs'];
     protected _currenttext : Partial<Pick<IEpisodeText, 'SpeakerName' | 'Phrase' | 'TLPhrase' | 'TLSpeakerName'>> = {}
+    protected _dialogueBoxVisible : boolean = true;
     
     constructor(){
         super();
@@ -240,7 +241,7 @@ export class TextView extends IView implements episodeExecutable{
             this._typingEffect = void 0;
         }
 
-        if (this._textPanelContainer.alpha === 0) {
+        if (this._dialogueBoxVisible && this._textPanelContainer.alpha === 0) {
             this.showTextPanel();
         }
 
@@ -264,6 +265,15 @@ export class TextView extends IView implements episodeExecutable{
             speakerName: this._sprakerText.text,
             dialogueText: this._phrase.text
         };
+    }
+
+    public setDialogueBoxVisible(visible: boolean) {
+        this._dialogueBoxVisible = visible;
+        this.visible = visible;
+    }
+
+    public getDialogueBoxVisible(): boolean {
+        return this._dialogueBoxVisible;
     }
 
 }

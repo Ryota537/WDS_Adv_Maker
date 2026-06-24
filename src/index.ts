@@ -137,6 +137,12 @@ const updateSandboxText = () => {
 speakerInput?.addEventListener("input", updateSandboxText);
 dialogueInput?.addEventListener("input", updateSandboxText);
 
+const dialogueBoxToggle = document.getElementById("dialogue-box-toggle") as HTMLInputElement;
+dialogueBoxToggle?.addEventListener("change", (e) => {
+  const isChecked = (e.target as HTMLInputElement).checked;
+  advplayer.setDialogueBoxVisible(isChecked);
+});
+
 // Toggle Sandbox Mode
 sandboxToggle?.addEventListener("change", (e) => {
   const isChecked = (e.target as HTMLInputElement).checked;
@@ -576,6 +582,7 @@ const originalApplySandboxState = advplayer.applySandboxState.bind(advplayer);
     if (state.dialogue) {
       if (speakerInput) speakerInput.value = state.dialogue.speakerName || "";
       if (dialogueInput) dialogueInput.value = state.dialogue.dialogueText || "";
+      if (dialogueBoxToggle) dialogueBoxToggle.checked = state.dialogue.visible !== false;
     }
     if (effectSepiaToggle) {
       effectSepiaToggle.checked = advplayer.getSandboxSepia();
