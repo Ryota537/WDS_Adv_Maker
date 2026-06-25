@@ -100,6 +100,10 @@ export class AdvPlayer extends Container<any> {
     this._textView.setDialogueBoxVisible(visible);
   }
 
+  public setDialogueRTL(enabled: boolean) {
+    this._textView.setRTLMode(enabled);
+  }
+
   public setSandboxSepia(visible: boolean) {
     this._effectView.setSepia(visible);
   }
@@ -121,7 +125,8 @@ export class AdvPlayer extends Container<any> {
       backgroundId: this._backgroundView.currentBGId,
       dialogue: {
         ...this._textView.sandboxText,
-        visible: this._textView.getDialogueBoxVisible()
+        visible: this._textView.getDialogueBoxVisible(),
+        rtl: this._textView.getRTLMode()
       },
       characters: this._characterView.getSandboxCharactersState(),
       effects: {
@@ -142,6 +147,7 @@ export class AdvPlayer extends Container<any> {
     // Restore Text/Dialogue
     if (state.dialogue) {
       this.setDialogueBoxVisible(state.dialogue.visible !== false);
+      this.setDialogueRTL(!!state.dialogue.rtl);
       this.setSandboxText(state.dialogue.speakerName || '', state.dialogue.dialogueText || '');
     }
 

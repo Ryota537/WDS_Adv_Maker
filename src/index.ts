@@ -143,6 +143,12 @@ dialogueBoxToggle?.addEventListener("change", (e) => {
   advplayer.setDialogueBoxVisible(isChecked);
 });
 
+const dialogueRtlToggle = document.getElementById("dialogue-rtl-toggle") as HTMLInputElement;
+dialogueRtlToggle?.addEventListener("change", (e) => {
+  const isChecked = (e.target as HTMLInputElement).checked;
+  advplayer.setDialogueRTL(isChecked);
+});
+
 // Toggle Sandbox Mode
 sandboxToggle?.addEventListener("change", (e) => {
   const isChecked = (e.target as HTMLInputElement).checked;
@@ -583,6 +589,7 @@ const originalApplySandboxState = advplayer.applySandboxState.bind(advplayer);
       if (speakerInput) speakerInput.value = state.dialogue.speakerName || "";
       if (dialogueInput) dialogueInput.value = state.dialogue.dialogueText || "";
       if (dialogueBoxToggle) dialogueBoxToggle.checked = state.dialogue.visible !== false;
+      if (dialogueRtlToggle) dialogueRtlToggle.checked = !!state.dialogue.rtl;
     }
     if (effectSepiaToggle) {
       effectSepiaToggle.checked = advplayer.getSandboxSepia();

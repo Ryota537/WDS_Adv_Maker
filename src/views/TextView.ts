@@ -20,6 +20,7 @@ export class TextView extends IView implements episodeExecutable{
     protected _fontFamilies : string[] = ['Ronowstd Gbs'];
     protected _currenttext : Partial<Pick<IEpisodeText, 'SpeakerName' | 'Phrase' | 'TLPhrase' | 'TLSpeakerName'>> = {}
     protected _dialogueBoxVisible : boolean = true;
+    protected _rtlMode : boolean = false;
     
     constructor(){
         super();
@@ -274,6 +275,29 @@ export class TextView extends IView implements episodeExecutable{
 
     public getDialogueBoxVisible(): boolean {
         return this._dialogueBoxVisible;
+    }
+
+    public setRTLMode(enabled: boolean) {
+        this._rtlMode = enabled;
+        if (enabled) {
+            this._phrase.anchor.x = 1;
+            this._phrase.x = 1534.5;
+            this._phrase.style.align = 'right';
+            this._phrase.style.letterSpacing = 0;
+
+            this._sprakerText.style.letterSpacing = 0;
+        } else {
+            this._phrase.anchor.x = 0;
+            this._phrase.x = 93.5;
+            this._phrase.style.align = 'left';
+            this._phrase.style.letterSpacing = -1.1;
+
+            this._sprakerText.style.letterSpacing = -1;
+        }
+    }
+
+    public getRTLMode(): boolean {
+        return this._rtlMode;
     }
 
 }
