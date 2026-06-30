@@ -83,9 +83,10 @@ export class AdvPlayer extends Container<any> {
     motion: string,
     facial: string,
     headDirection: string,
-    position: { x: number, y: number, scale: number }
+    position: { x: number, y: number, scale: number },
+    zIndex?: number
   ) {
-    await this._characterView.updateSandboxCharacter(charId, costumeId, motion, facial, headDirection, position);
+    await this._characterView.updateSandboxCharacter(charId, costumeId, motion, facial, headDirection, position, zIndex);
   }
 
   public removeSandboxCharacter(charId: string) {
@@ -170,7 +171,8 @@ export class AdvPlayer extends Container<any> {
           char.motion,
           char.facial,
           char.headDirection || "head/normal",
-          char.position
+          char.position,
+          char.zIndex ?? 0
         );
       }
     }

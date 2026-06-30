@@ -173,7 +173,8 @@ export class CharacterView extends IView implements episodeExecutable{
         motion: string, 
         facial: string, 
         headDirection: string,
-        position: {x: number, y: number, scale: number}
+        position: {x: number, y: number, scale: number},
+        zIndex?: number
     ) {
         const isCustomImage = charId.startsWith("custom_");
         let record = this._motionCharacters.find(item => item.character && item.character.charId === charId);
@@ -261,6 +262,9 @@ export class CharacterView extends IView implements episodeExecutable{
             model.showCharacter(true);
             model.setPositionCoords(position.x, position.y);
             model.setScale(position.scale);
+            if (zIndex !== undefined) {
+                model.zIndex = zIndex;
+            }
             
             if (!isCustomImage) {
                 if (motion) {

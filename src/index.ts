@@ -811,17 +811,22 @@ const renderCharacterControllers = () => {
 
       const xSliderGroup = createSlider("Position X", 0, 1920, 1, char.position.x, async (xVal) => {
         char.position.x = xVal;
-        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position);
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position, char.zIndex);
       });
 
       const ySliderGroup = createSlider("Position Y", 0, 1080, 1, char.position.y, async (yVal) => {
         char.position.y = yVal;
-        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position);
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position, char.zIndex);
       });
 
       const scaleSliderGroup = createSlider("Scale", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
         char.position.scale = scaleVal;
-        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position);
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position, char.zIndex);
+      });
+
+      const zSliderGroup = createSlider("Layer Order (Z-Index)", -10, 10, 1, char.zIndex ?? 0, async (zVal) => {
+        char.zIndex = zVal;
+        await advplayer.updateSandboxCharacter(charId, "", "", "", "", char.position, zVal);
       });
 
       const deleteBtn = document.createElement("button");
@@ -840,6 +845,7 @@ const renderCharacterControllers = () => {
       body.appendChild(xSliderGroup);
       body.appendChild(ySliderGroup);
       body.appendChild(scaleSliderGroup);
+      body.appendChild(zSliderGroup);
       body.appendChild(deleteBtn);
 
       card.appendChild(header);
@@ -930,19 +936,25 @@ const renderCharacterControllers = () => {
     // Position X Slider
     const xSliderGroup = createSlider("Position X", 0, 1920, 1, char.position.x, async (xVal) => {
       char.position.x = xVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position, char.zIndex);
     });
 
     // Position Y Slider
     const ySliderGroup = createSlider("Position Y", 0, 1080, 1, char.position.y, async (yVal) => {
       char.position.y = yVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position, char.zIndex);
     });
 
     // Scale Slider
     const scaleSliderGroup = createSlider("Scale", 0.1, 2.0, 0.01, char.position.scale, async (scaleVal) => {
       char.position.scale = scaleVal;
-      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position);
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position, char.zIndex);
+    });
+
+    // Layer Order (Z-Index) Slider
+    const zSliderGroup = createSlider("Layer Order (Z-Index)", -10, 10, 1, char.zIndex ?? 0, async (zVal) => {
+      char.zIndex = zVal;
+      await advplayer.updateSandboxCharacter(charId, char.costumeId, char.motion, char.facial, char.headDirection || "head/normal", char.position, zVal);
     });
 
     // Costume Dropdown
@@ -1041,6 +1053,7 @@ const renderCharacterControllers = () => {
     presetPane.appendChild(xSliderGroup);
     presetPane.appendChild(ySliderGroup);
     presetPane.appendChild(scaleSliderGroup);
+    presetPane.appendChild(zSliderGroup);
     presetPane.appendChild(costumeGroup);
     presetPane.appendChild(motionGroup);
     presetPane.appendChild(facialGroup);

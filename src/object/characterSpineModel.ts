@@ -261,6 +261,14 @@ export class AdventureAnimationStandCharacter {
         return this._model.visible;
     }
 
+    get zIndex(): number {
+        return this._model.zIndex;
+    }
+
+    set zIndex(val: number) {
+        this._model.zIndex = val;
+    }
+
     get charId(){
         return this._charId;
     }
@@ -296,7 +304,8 @@ export class AdventureAnimationStandCharacter {
                 x: this._model.x,
                 y: this._model.y,
                 scale: this._model.scale.x
-            }
+            },
+            zIndex: this.zIndex
         };
     }
 
@@ -511,6 +520,14 @@ export class CustomStaticCharacter {
         return this._model.visible;
     }
 
+    get zIndex(): number {
+        return this._model.zIndex;
+    }
+
+    set zIndex(val: number) {
+        this._model.zIndex = val;
+    }
+
     get charId(){
         return this._charId;
     }
@@ -547,7 +564,8 @@ export class CustomStaticCharacter {
                 y: this._model.y,
                 scale: this._model.scale.x
             },
-            isCustomImage: true
+            isCustomImage: true,
+            zIndex: this.zIndex
         };
     }
 
