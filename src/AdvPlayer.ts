@@ -236,16 +236,44 @@ export class AdvPlayer extends Container<any> {
       // Force render the stage immediately
       pixiapp.render();
 
-      // Extract image directly from the canvas
-      const base64 = pixiapp.canvas.toDataURL('image/png');
+      // Extract to a fresh 2D canvas synchronously. Reading the WebGL
+      // drawing buffer asynchronously (canvas.toBlob) can yield a blank
+      // image, because the buffer is cleared after compositing.
+      let canvas2d: HTMLCanvasElement | null = null;
+      try {
+        const extract = pixiapp.renderer?.extract;
+        if (extract?.canvas && pixiapp.stage) {
+          canvas2d = extract.canvas(pixiapp.stage) as HTMLCanvasElement;
+        }
+      } catch (e) {
+        // fall through to the data URL path below
+      }
 
-      // Create download link and trigger download
-      const downloadAnchor = document.createElement("a");
-      downloadAnchor.setAttribute("href", base64);
-      downloadAnchor.setAttribute("download", "wds_sandbox_capture.png");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      const finish = (url: string) => {
+        // Create download link and trigger download
+        const downloadAnchor = document.createElement("a");
+        downloadAnchor.setAttribute("href", url);
+        downloadAnchor.setAttribute("download", "wds_sandbox_capture.png");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+      };
+
+      if (canvas2d) {
+        // Blob + object URL — data URIs silently fail on iOS Safari
+        canvas2d.toBlob((blob) => {
+          if (blob) {
+            finish(URL.createObjectURL(blob));
+          } else {
+            finish(canvas2d!.toDataURL("image/png"));
+          }
+        }, "image/png");
+      } else {
+        // Fallback: synchronous readback (only safe on the WebGL canvas
+        // because it is called in the same task as pixiapp.render()).
+        finish(pixiapp.canvas.toDataURL("image/png"));
+      }
     } catch (error) {
       console.error("Failed to export scene to image:", error);
     } finally {
